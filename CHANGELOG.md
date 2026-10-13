@@ -5,6 +5,22 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ---
 
+## [0.3.0] - 2026-10-13
+
+### 🚀 Añadido
+- **Autenticación Real con Google (Gmail) & Supabase**:
+  - Endpoint de callback OAuth de servidor (`/auth/callback`) para intercambiar códigos de sesión de Google con Supabase Auth.
+  - Soporte de inicio de sesión con Google OAuth y vinculación directa de cuenta de Gmail en `/login`.
+- **Persistencia de Datos Aislada por Cuenta de Usuario**:
+  - Motor `UserStorageManager` que guarda todas las páginas, notas, bloques y bases de datos bajo la identidad específica del usuario (`agendar_pages_${userEmail}`).
+  - Cuando un usuario inicia sesión con su Gmail, sus notas se cargan automáticamente y cualquier edición se sincroniza y almacena en su cuenta.
+- **Controles de Cuenta en la Interfaz**:
+  - Indicador de usuario activo en la barra superior con estado "Guardado en tu cuenta".
+  - Botón interactivo de "Iniciar sesión con Gmail" en Sidebar y Navbar cuando no hay sesión.
+  - Opción de "Cerrar sesión" y cambio de cuenta instantáneo.
+
+---
+
 ## [0.2.0] - 2026-10-13
 
 ### 🚀 Añadido

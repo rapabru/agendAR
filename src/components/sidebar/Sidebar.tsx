@@ -19,6 +19,9 @@ import {
   Layers,
   Bot,
   Shield,
+  LogIn,
+  LogOut,
+  User,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -33,6 +36,10 @@ interface SidebarProps {
   googleCalendarLinked: boolean;
   googleEmail?: string;
   userEmail: string;
+  isLoggedIn?: boolean;
+  userName?: string;
+  onLogin?: () => void;
+  onLogout?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -47,6 +54,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
   googleCalendarLinked,
   googleEmail,
   userEmail,
+  isLoggedIn,
+  userName,
+  onLogin,
+  onLogout,
 }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [showFavorites, setShowFavorites] = useState(true);
@@ -198,7 +209,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Security & Sync Status Bar */}
-      <div className="p-3 border-t border-[#2f2f2f] text-xs">
+      <div className="p-3 border-t border-[#2f2f2f] text-xs space-y-2">
         <div className="flex items-center justify-between text-gray-400">
           <div className="flex items-center gap-1.5 text-[11px]">
             <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
@@ -210,6 +221,40 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </span>
           )}
         </div>
+
+        {/* User Account Controls */}
+        {!collapsed && (
+          <div className="pt-2 border-t border-[#2a2a2a] flex items-center justify-between">
+            {isLoggedIn ? (
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-center gap-2 truncate">
+                  <div className="w-6 h-6 rounded-full bg-blue-600/30 text-blue-300 border border-blue-500/40 flex items-center justify-center text-[10px] font-bold">
+                    {userName ? userName[0].toUpperCase() : "G"}
+                  </div>
+                  <div className="flex flex-col truncate">
+                    <span className="text-[11px] font-medium text-gray-200 truncate">{userName || "Usuario"}</span>
+                    <span className="text-[9px] text-emerald-400">Guardado en tu cuenta</span>
+                  </div>
+                </div>
+                <button
+                  onClick={onLogout}
+                  title="Cerrar sesión"
+                  className="p-1 hover:text-red-400 hover:bg-[#2c2c2c] rounded text-gray-400 transition"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={onLogin}
+                className="w-full flex items-center justify-center gap-1.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-xs font-medium transition shadow-sm"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                <span>Iniciar con Gmail</span>
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </aside>
   );

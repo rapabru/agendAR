@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Sidebar } from "@/components/sidebar/Sidebar";
 import { BlockEditor } from "@/components/editor/BlockEditor";
 import { GoogleCalendarModal } from "@/components/calendar/GoogleCalendarModal";
@@ -12,6 +14,8 @@ import { INITIAL_PAGES, INITIAL_BLOCKS } from "@/lib/mock-data";
 import { Block, BlockType, PageItem } from "@/lib/types";
 import { TemplateDefinition } from "@/lib/templates";
 import { GoogleCalendarClient, blockToCalendarEvent } from "@/lib/google-calendar";
+import { getActiveUser, logoutUser, AuthUser, setLocalGmailSession } from "@/lib/supabase/auth";
+import { UserStorageManager } from "@/lib/storage";
 import {
   Calendar,
   Lock,
@@ -24,9 +28,16 @@ import {
   Users,
   Shield,
   Bot,
+  LogIn,
+  LogOut,
+  User,
 } from "lucide-react";
 
 export default function AgendARApp() {
+  const router = useRouter();
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
+  const [storage, setStorage] = useState<UserStorageManager>(new UserStorageManager("default"));
+
   const [pages, setPages] = useState<PageItem[]>(INITIAL_PAGES);
   const [activePageId, setActivePageId] = useState<string>("welcome-page");
   const [blocks, setBlocks] = useState<Record<string, Block>>(INITIAL_BLOCKS);
@@ -46,6 +57,34 @@ export default function AgendARApp() {
   const [isVaultModalOpen, setIsVaultModalOpen] = useState(false);
   const [unlockedVaults, setUnlockedVaults] = useState<Record<string, boolean>>({});
 
+  // Cargar usuario y datos aislados por cuenta al montar
+  useEffect(() => {
+    async function initUserSession() {
+      const user = await getActiveUser();
+      const userIdentifier = user?.email || "default_space";
+      const userStorage = new UserStorageManager(userIdentifier);
+
+      setCurrentUser(user);
+      setStorage(userStorage);
+
+      const loadedPages = userStorage.loadPages();
+      const loadedBlocks = userStorage.loadBlocks();
+
+      setPages(loadedPages);
+      setBlocks(loadedBlocks);
+
+      if (loadedPages.length > 0) {
+        setActivePageId(loadedPages[0].id);
+      }
+      if (user?.email) {
+        setGoogleEmail(user.email);
+        setIsGoogleLinked(true);
+      }
+    }
+
+    initUserSession();
+  }, []);
+
   const activePage = pages.find((p) => p.id === activePageId) || pages[0];
   const activeBlocks = (activePage?.blockIds || [])
     .map((id) => blocks[id])
@@ -58,30 +97,34 @@ export default function AgendARApp() {
 
   // Handler para actualizar título
   const handleUpdateTitle = (newTitle: string) => {
-    setPages(
-      pages.map((p) => (p.id === activePageId ? { ...p, title: newTitle, updatedAt: Date.now() } : p))
+    const updatedPages = pages.map((p) =>
+      p.id === activePageId ? { ...p, title: newTitle, updatedAt: Date.now() } : p
     );
+    setPages(updatedPages);
+    storage.savePages(updatedPages);
   };
 
   // Toggle de favorito
   const handleToggleFavorite = () => {
-    setPages(
-      pages.map((p) =>
-        p.id === activePageId ? { ...p, isFavorite: !p.isFavorite } : p
-      )
+    const updatedPages = pages.map((p) =>
+      p.id === activePageId ? { ...p, isFavorite: !p.isFavorite } : p
     );
+    setPages(updatedPages);
+    storage.savePages(updatedPages);
   };
 
   // Handler para actualizar bloque
   const handleUpdateBlock = (blockId: string, updates: Partial<Block>) => {
-    setBlocks((prev) => ({
-      ...prev,
+    const updatedBlocks = {
+      ...blocks,
       [blockId]: {
-        ...prev[blockId],
+        ...blocks[blockId],
         ...updates,
         updatedAt: Date.now(),
       },
-    }));
+    };
+    setBlocks(updatedBlocks);
+    storage.saveBlocks(updatedBlocks);
   };
 
   // Handler para añadir bloque
@@ -96,58 +139,61 @@ export default function AgendARApp() {
       parentId: activePageId,
     };
 
-    setBlocks((prev) => ({ ...prev, [newId]: newBlock }));
+    const updatedBlocks = { ...blocks, [newId]: newBlock };
+    setBlocks(updatedBlocks);
+    storage.saveBlocks(updatedBlocks);
 
-    setPages((prevPages) =>
-      prevPages.map((page) => {
-        if (page.id !== activePageId) return page;
-        const currentIds = [...page.blockIds];
-        if (afterBlockId) {
-          const index = currentIds.indexOf(afterBlockId);
-          currentIds.splice(index + 1, 0, newId);
-        } else {
-          currentIds.push(newId);
-        }
-        return { ...page, blockIds: currentIds, updatedAt: Date.now() };
-      })
-    );
+    const updatedPages = pages.map((page) => {
+      if (page.id !== activePageId) return page;
+      const currentIds = [...page.blockIds];
+      if (afterBlockId) {
+        const index = currentIds.indexOf(afterBlockId);
+        currentIds.splice(index + 1, 0, newId);
+      } else {
+        currentIds.push(newId);
+      }
+      return { ...page, blockIds: currentIds, updatedAt: Date.now() };
+    });
+
+    setPages(updatedPages);
+    storage.savePages(updatedPages);
   };
 
   // Handler para eliminar bloque
   const handleDeleteBlock = (blockId: string) => {
-    setPages((prevPages) =>
-      prevPages.map((page) =>
-        page.id === activePageId
-          ? {
-              ...page,
-              blockIds: page.blockIds.filter((id) => id !== blockId),
-              updatedAt: Date.now(),
-            }
-          : page
-      )
+    const updatedPages = pages.map((page) =>
+      page.id === activePageId
+        ? {
+            ...page,
+            blockIds: page.blockIds.filter((id) => id !== blockId),
+            updatedAt: Date.now(),
+          }
+        : page
     );
+    setPages(updatedPages);
+    storage.savePages(updatedPages);
   };
 
   // Handler para reordenar bloques
   const handleMoveBlock = (blockId: string, direction: "up" | "down") => {
-    setPages((prevPages) =>
-      prevPages.map((page) => {
-        if (page.id !== activePageId) return page;
-        const ids = [...page.blockIds];
-        const idx = ids.indexOf(blockId);
-        if (idx < 0) return page;
+    const updatedPages = pages.map((page) => {
+      if (page.id !== activePageId) return page;
+      const ids = [...page.blockIds];
+      const idx = ids.indexOf(blockId);
+      if (idx < 0) return page;
 
-        const targetIdx = direction === "up" ? idx - 1 : idx + 1;
-        if (targetIdx < 0 || targetIdx >= ids.length) return page;
+      const targetIdx = direction === "up" ? idx - 1 : idx + 1;
+      if (targetIdx < 0 || targetIdx >= ids.length) return page;
 
-        // Intercambiar
-        const temp = ids[idx];
-        ids[idx] = ids[targetIdx];
-        ids[targetIdx] = temp;
+      const temp = ids[idx];
+      ids[idx] = ids[targetIdx];
+      ids[targetIdx] = temp;
 
-        return { ...page, blockIds: ids };
-      })
-    );
+      return { ...page, blockIds: ids };
+    });
+
+    setPages(updatedPages);
+    storage.savePages(updatedPages);
   };
 
   // Handler para crear nueva página
@@ -174,9 +220,15 @@ export default function AgendARApp() {
       blockIds: [initialBlockId],
     };
 
-    setBlocks((prev) => ({ ...prev, [initialBlockId]: newBlock }));
-    setPages((prev) => [...prev, newPage]);
+    const updatedBlocks = { ...blocks, [initialBlockId]: newBlock };
+    const updatedPages = [...pages, newPage];
+
+    setBlocks(updatedBlocks);
+    setPages(updatedPages);
     setActivePageId(newPageId);
+
+    storage.saveBlocks(updatedBlocks);
+    storage.savePages(updatedPages);
     showToast(isEncrypted ? "Bóveda cifrada creada con éxito" : "Página creada");
   };
 
@@ -188,6 +240,7 @@ export default function AgendARApp() {
     }
     const remaining = pages.filter((p) => p.id !== pageId);
     setPages(remaining);
+    storage.savePages(remaining);
     if (activePageId === pageId) {
       setActivePageId(remaining[0].id);
     }
@@ -245,9 +298,15 @@ export default function AgendARApp() {
       blockIds: createdBlockIds,
     };
 
-    setBlocks((prev) => ({ ...prev, ...newBlocksObj }));
-    setPages((prev) => [...prev, newPage]);
+    const updatedBlocks = { ...blocks, ...newBlocksObj };
+    const updatedPages = [...pages, newPage];
+
+    setBlocks(updatedBlocks);
+    setPages(updatedPages);
     setActivePageId(newPageId);
+
+    storage.saveBlocks(updatedBlocks);
+    storage.savePages(updatedPages);
     showToast(`Plantilla "${template.name}" creada con éxito.`);
   };
 
@@ -284,19 +343,25 @@ export default function AgendARApp() {
       blockIds: createdBlockIds,
     };
 
-    setBlocks((prev) => ({ ...prev, ...newBlocksObj }));
-    setPages((prev) => [...prev, newPage]);
+    const updatedBlocks = { ...blocks, ...newBlocksObj };
+    const updatedPages = [...pages, newPage];
+
+    setBlocks(updatedBlocks);
+    setPages(updatedPages);
     setActivePageId(newPageId);
+
+    storage.saveBlocks(updatedBlocks);
+    storage.savePages(updatedPages);
     showToast("Página generada con el Asistente IA.");
   };
 
   // Handler para alternar privacidad
   const handleTogglePrivate = (isPrivate: boolean) => {
-    setPages((prev) =>
-      prev.map((p) =>
-        p.id === activePageId ? { ...p, isPrivate, updatedAt: Date.now() } : p
-      )
+    const updatedPages = pages.map((p) =>
+      p.id === activePageId ? { ...p, isPrivate, updatedAt: Date.now() } : p
     );
+    setPages(updatedPages);
+    storage.savePages(updatedPages);
     showToast(isPrivate ? "Página marcada como Proyecto Privado" : "Página compartida con el Workspace");
   };
 
@@ -314,7 +379,16 @@ export default function AgendARApp() {
         onOpenAIModal={() => setIsAIModalOpen(true)}
         googleCalendarLinked={isGoogleLinked}
         googleEmail={googleEmail}
-        userEmail="usuario@agendar.app"
+        userEmail={currentUser?.email || "Sin sesión (Modo Invitado)"}
+        userName={currentUser?.name}
+        isLoggedIn={!!currentUser}
+        onLogin={() => router.push("/login")}
+        onLogout={async () => {
+          await logoutUser();
+          setCurrentUser(null);
+          showToast("Sesión cerrada.");
+          window.location.reload();
+        }}
       />
 
       {/* Main Content Area */}
@@ -383,8 +457,28 @@ export default function AgendARApp() {
               <span>Compartir</span>
             </button>
 
-            <span className="text-[11px] text-gray-500 hidden md:flex items-center gap-1">
-              <Clock className="w-3 h-3" /> Editado
+            {/* User Account Button */}
+            {currentUser ? (
+              <button
+                onClick={() => router.push("/login")}
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#252525] hover:bg-[#2c2c2c] text-gray-200 border border-[#333333] transition"
+                title="Cuenta activa - Clic para cambiar"
+              >
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="truncate max-w-[120px] font-mono text-[11px]">{currentUser.email}</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => router.push("/login")}
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white font-medium transition shadow-sm"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                <span>Iniciar con Gmail</span>
+              </button>
+            )}
+
+            <span className="text-[11px] text-gray-500 hidden lg:flex items-center gap-1">
+              <Clock className="w-3 h-3" /> Guardado
             </span>
           </div>
         </header>
