@@ -16,6 +16,9 @@ import {
   Trash2,
   ExternalLink,
   Sparkles,
+  Layers,
+  Bot,
+  Shield,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -25,6 +28,8 @@ interface SidebarProps {
   onCreatePage: (isEncrypted?: boolean) => void;
   onDeletePage: (id: string) => void;
   onOpenCalendarModal: () => void;
+  onOpenTemplates: () => void;
+  onOpenAIModal: () => void;
   googleCalendarLinked: boolean;
   googleEmail?: string;
   userEmail: string;
@@ -37,6 +42,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onCreatePage,
   onDeletePage,
   onOpenCalendarModal,
+  onOpenTemplates,
+  onOpenAIModal,
   googleCalendarLinked,
   googleEmail,
   userEmail,
@@ -76,6 +83,29 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Quick Actions */}
       <div className="p-2 space-y-1">
+        <button
+          onClick={onOpenAIModal}
+          className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs hover:bg-[#2c2c2c] hover:text-[#e3e2e0] transition text-left group"
+        >
+          <Sparkles className="w-4 h-4 text-purple-400" />
+          {!collapsed && (
+            <div className="flex-1 flex items-center justify-between">
+              <span>Asistente IA</span>
+              <span className="text-[9px] px-1.5 py-0.2 bg-purple-500/20 text-purple-300 rounded border border-purple-500/30">
+                BYOK
+              </span>
+            </div>
+          )}
+        </button>
+
+        <button
+          onClick={onOpenTemplates}
+          className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs hover:bg-[#2c2c2c] hover:text-[#e3e2e0] transition text-left"
+        >
+          <Layers className="w-4 h-4 text-blue-400" />
+          {!collapsed && <span>Galería de Plantillas</span>}
+        </button>
+
         <button
           onClick={onOpenCalendarModal}
           className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs hover:bg-[#2c2c2c] hover:text-[#e3e2e0] transition text-left group"
@@ -208,6 +238,11 @@ const PageNavItem: React.FC<PageNavItemProps> = ({ page, isActive, onSelect, onD
       </div>
 
       <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1 transition">
+        {page.isPrivate && (
+          <span title="Proyecto Privado" className="text-blue-400 text-[10px]">
+            Privado
+          </span>
+        )}
         {page.isEncrypted && (
           <span title="Bóveda Cifrada" className="text-purple-400 text-[10px]">
             E2EE

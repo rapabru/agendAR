@@ -5,8 +5,12 @@ import { Sidebar } from "@/components/sidebar/Sidebar";
 import { BlockEditor } from "@/components/editor/BlockEditor";
 import { GoogleCalendarModal } from "@/components/calendar/GoogleCalendarModal";
 import { VaultUnlockModal } from "@/components/security/VaultUnlockModal";
+import { TemplatesModal } from "@/components/templates/TemplatesModal";
+import { AIAssistantModal } from "@/components/ai/AIAssistantModal";
+import { ShareModal } from "@/components/sharing/ShareModal";
 import { INITIAL_PAGES, INITIAL_BLOCKS } from "@/lib/mock-data";
 import { Block, BlockType, PageItem } from "@/lib/types";
+import { TemplateDefinition } from "@/lib/templates";
 import { GoogleCalendarClient, blockToCalendarEvent } from "@/lib/google-calendar";
 import {
   Calendar,
@@ -16,6 +20,10 @@ import {
   Share2,
   Clock,
   Sparkles,
+  Layers,
+  Users,
+  Shield,
+  Bot,
 } from "lucide-react";
 
 export default function AgendARApp() {
@@ -23,8 +31,13 @@ export default function AgendARApp() {
   const [activePageId, setActivePageId] = useState<string>("welcome-page");
   const [blocks, setBlocks] = useState<Record<string, Block>>(INITIAL_BLOCKS);
 
-  // Google Calendar State
+  // Modals State
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
+  const [isTemplatesModalOpen, setIsTemplatesModalOpen] = useState(false);
+  const [isAIModalOpen, setIsAIModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+
+  // Google Calendar State
   const [isGoogleLinked, setIsGoogleLinked] = useState(true);
   const [googleEmail, setGoogleEmail] = useState("usuario.agendar@gmail.com");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -202,6 +215,91 @@ export default function AgendARApp() {
     }
   };
 
+  // Handler para seleccionar plantilla
+  const handleSelectTemplate = (template: TemplateDefinition) => {
+    const newPageId = `page-tpl-${Date.now()}`;
+    const createdBlockIds: string[] = [];
+    const newBlocksObj: Record<string, Block> = {};
+
+    template.blocks.forEach((blk, idx) => {
+      const bId = `b-tpl-${Date.now()}-${idx}`;
+      createdBlockIds.push(bId);
+      newBlocksObj[bId] = {
+        ...blk,
+        id: bId,
+        parentId: newPageId,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      };
+    });
+
+    const newPage: PageItem = {
+      id: newPageId,
+      title: template.name,
+      icon: template.icon,
+      isFavorite: false,
+      isEncrypted: !!template.isEncrypted,
+      isPrivate: false,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      blockIds: createdBlockIds,
+    };
+
+    setBlocks((prev) => ({ ...prev, ...newBlocksObj }));
+    setPages((prev) => [...prev, newPage]);
+    setActivePageId(newPageId);
+    showToast(`Plantilla "${template.name}" creada con éxito.`);
+  };
+
+  // Handler para aplicar bloques generados por IA
+  const handleApplyAIGeneratedBlocks = (
+    title: string,
+    genBlocks: Omit<Block, "id" | "createdAt" | "updatedAt">[]
+  ) => {
+    const newPageId = `page-ai-${Date.now()}`;
+    const createdBlockIds: string[] = [];
+    const newBlocksObj: Record<string, Block> = {};
+
+    genBlocks.forEach((blk, idx) => {
+      const bId = `b-ai-${Date.now()}-${idx}`;
+      createdBlockIds.push(bId);
+      newBlocksObj[bId] = {
+        ...blk,
+        id: bId,
+        parentId: newPageId,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      };
+    });
+
+    const newPage: PageItem = {
+      id: newPageId,
+      title: title.slice(0, 50),
+      icon: "✨",
+      isFavorite: false,
+      isEncrypted: false,
+      isPrivate: false,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      blockIds: createdBlockIds,
+    };
+
+    setBlocks((prev) => ({ ...prev, ...newBlocksObj }));
+    setPages((prev) => [...prev, newPage]);
+    setActivePageId(newPageId);
+    showToast("Página generada con el Asistente IA.");
+  };
+
+  // Handler para alternar privacidad
+  const handleTogglePrivate = (isPrivate: boolean) => {
+    setPages((prev) =>
+      prev.map((p) =>
+        p.id === activePageId ? { ...p, isPrivate, updatedAt: Date.now() } : p
+      )
+    );
+    showToast(isPrivate ? "Página marcada como Proyecto Privado" : "Página compartida con el Workspace");
+  };
+
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[#191919]">
       {/* Sidebar */}
@@ -212,6 +310,8 @@ export default function AgendARApp() {
         onCreatePage={handleCreatePage}
         onDeletePage={handleDeletePage}
         onOpenCalendarModal={() => setIsCalendarModalOpen(true)}
+        onOpenTemplates={() => setIsTemplatesModalOpen(true)}
+        onOpenAIModal={() => setIsAIModalOpen(true)}
         googleCalendarLinked={isGoogleLinked}
         googleEmail={googleEmail}
         userEmail="usuario@agendar.app"
@@ -237,6 +337,12 @@ export default function AgendARApp() {
               <Star className="w-3.5 h-3.5 fill-current" />
             </button>
 
+            {activePage?.isPrivate && (
+              <span className="flex items-center gap-1 text-[10px] text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded border border-blue-500/20">
+                <Shield className="w-3 h-3" /> Privado
+              </span>
+            )}
+
             {activePage?.isEncrypted && (
               <span className="flex items-center gap-1 text-[10px] text-purple-400 bg-purple-500/10 px-1.5 py-0.5 rounded border border-purple-500/20">
                 <Lock className="w-3 h-3" /> E2EE
@@ -244,7 +350,23 @@ export default function AgendARApp() {
             )}
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
+            <button
+              onClick={() => setIsAIModalOpen(true)}
+              className="flex items-center gap-1 px-2.5 py-1 rounded bg-purple-600/15 hover:bg-purple-600/25 text-purple-300 border border-purple-500/30 transition font-medium"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+              <span>Asistente IA</span>
+            </button>
+
+            <button
+              onClick={() => setIsTemplatesModalOpen(true)}
+              className="flex items-center gap-1 px-2.5 py-1 rounded bg-[#252525] hover:bg-[#2c2c2c] text-blue-400 border border-[#333333] transition"
+            >
+              <Layers className="w-3.5 h-3.5" />
+              <span>Plantillas</span>
+            </button>
+
             <button
               onClick={() => setIsCalendarModalOpen(true)}
               className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#252525] hover:bg-[#2c2c2c] text-emerald-400 border border-[#333333] transition"
@@ -253,8 +375,16 @@ export default function AgendARApp() {
               <span>{isGoogleLinked ? "Google Calendar" : "Conectar Calendar"}</span>
             </button>
 
-            <span className="text-[11px] text-gray-500 flex items-center gap-1">
-              <Clock className="w-3 h-3" /> Editado hace un momento
+            <button
+              onClick={() => setIsShareModalOpen(true)}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#252525] hover:bg-[#2c2c2c] text-[#e3e2e0] border border-[#333333] transition"
+            >
+              <Users className="w-3.5 h-3.5 text-blue-400" />
+              <span>Compartir</span>
+            </button>
+
+            <span className="text-[11px] text-gray-500 hidden md:flex items-center gap-1">
+              <Clock className="w-3 h-3" /> Editado
             </span>
           </div>
         </header>
@@ -295,6 +425,28 @@ export default function AgendARApp() {
           setUnlockedVaults((prev) => ({ ...prev, [activePage.id]: true }));
           showToast("Bóveda desbloqueada con éxito (Claves derivadas)");
         }}
+      />
+
+      {/* Templates Modal */}
+      <TemplatesModal
+        isOpen={isTemplatesModalOpen}
+        onClose={() => setIsTemplatesModalOpen(false)}
+        onSelectTemplate={handleSelectTemplate}
+      />
+
+      {/* AI Assistant Modal */}
+      <AIAssistantModal
+        isOpen={isAIModalOpen}
+        onClose={() => setIsAIModalOpen(false)}
+        onApplyGeneratedBlocks={handleApplyAIGeneratedBlocks}
+      />
+
+      {/* Share / Private Project Modal */}
+      <ShareModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        page={activePage}
+        onTogglePrivate={handleTogglePrivate}
       />
 
       {/* Toast Notification */}

@@ -83,6 +83,7 @@ export interface PageItem {
   parentId?: string | null; // Jerarquía de páginas infinitas
   isFavorite?: boolean;
   isEncrypted?: boolean; // Indica si es una Bóveda E2EE
+  isPrivate?: boolean; // Indica si es un proyecto privado
   encryptionSalt?: string; // Salt para derivar la clave local
   createdAt: number;
   updatedAt: number;

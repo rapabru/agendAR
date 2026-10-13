@@ -1,5 +1,10 @@
 # 🚀 AgendAR
 
+[![Release](https://img.shields.io/badge/release-v0.2.0-blue.svg)](https://github.com/rapabru/agendAR/releases)
+[![Deploy](https://img.shields.io/badge/deployed-Vercel-black.svg)](https://agendar-one.vercel.app)
+[![Database](https://img.shields.io/badge/database-Supabase%20PostgreSQL-emerald.svg)](https://supabase.com)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
 > **El espacio de trabajo colaborativo todo-en-uno que combina notas estructuradas basadas en bloques, bases de datos relacionales sin código, sincronización bidireccional con Google Calendar y Bóvedas con encriptación de grado militar (Zero-Knowledge / E2EE).**
 
 ---
@@ -27,12 +32,26 @@
 - **Proyección Temporal**: Vista de calendario integrado para seguimiento de fechas límite.
 - **Filtros en Tiempo Real**: Búsqueda y filtrado instantáneo de elementos.
 
-### 🤖 5. Inteligencia Artificial Multi-Modelo (Próximamente / BYOK)
-- Conexión de claves propias (*Bring Your Own Key*) para interactuar con:
-  - **Google Gemini** (Gemini 2.5 / 1.5 Pro & Flash)
-  - **Anthropic Claude** (Claude 3.7 Sonnet / Opus)
+### 🤖 5. Inteligencia Artificial Multi-Modelo (BYOK - Bring Your Own Key)
+- Motor compatible con:
+  - **Google Gemini** (Gemini 1.5/2.5 Flash & Pro) — con soporte para el plan gratuito de Google AI Studio.
+  - **Anthropic Claude** (Claude 3.5/3.7 Sonnet)
   - **OpenAI / Codex** (GPT-4o)
-- Generación de resúmenes, lluvia de ideas, autocompletado de bloques y creación automática de plantillas.
+- Capacidad de generar planes completos estructurados en bloques a partir de un solo prompt.
+
+### 📚 6. Galería de Plantillas Profesionales Integrada
+- Plantillas listas con 1-clic:
+  - *Planificador Semanal & Timeblocking* (vinculado a Google Calendar).
+  - *Roadmap Ágil de Software / Scrum Sprint*.
+  - *Monitor de Hábitos y Metas Diarias*.
+  - *Minuta de Reunión & Acuerdos*.
+  - *Bóveda de Seguridad & Credenciales (E2EE)*.
+  - *CRM de Contactos & Leads*.
+
+### 👥 7. Proyectos Privados y Colaboración Multiusuario
+- Modal para alternar entre **Proyecto Privado** (visible solo para el creador) y **Compartido con el Workspace**.
+- Sistema de invitaciones por email y generación de enlaces para unirse con roles (*Owner, Admin, Editor, Lector*).
+- Migraciones preparadas para PostgreSQL en Supabase con Row-Level Security (RLS).
 
 ---
 
@@ -112,15 +131,15 @@ graph TD
 
 ---
 
-## 🗺️ Roadmap de Próximas Fases
-
+## 🗺️ Roadmap de Fases
 - [x] **Fase 0**: Arquitectura modular, setup Next.js 15, Tailwind y tipos core.
 - [x] **Fase 1**: Motor criptográfico AES-GCM-256 E2EE, Google Calendar Sync y vistas de login/registro.
 - [x] **Fase 2**: Editor de bloques con barra Slash (`/`), Bóvedas privadas y base de datos Kanban/Tabla.
-- [ ] **Fase 3**: Persistencia completa en PostgreSQL (Prisma/Drizzle) + invitaciones multiusuario a Workspaces.
-- [ ] **Fase 4**: Colaboración multijugador en tiempo real con WebSockets / CRDTs (Yjs).
-- [ ] **Fase 5**: Integración de Modelos IA (Gemini, Claude, Codex) con BYOK.
-- [ ] **Fase 6**: Galería extensa de plantillas preconfiguradas y personalizables.
+- [x] **Fase 3**: Persistencia completa y schema para PostgreSQL en Supabase + RLS para proyectos privados.
+- [x] **Fase 4**: Asistente de IA multi-proveedor con BYOK (Gemini gratis, Claude, OpenAI) para generación de notas y bloques.
+- [x] **Fase 5**: Galería de 6 plantillas profesionales integradas (Scrum, Timeblocking, Hábitos, Minutas, Bóvedas, CRM).
+- [ ] **Fase 6**: Colaboración multijugador en vivo con cursores compartidos (WebSockets / Supabase Realtime / CRDTs).
+- [ ] **Fase 7**: Conexión activa con cuenta Supabase en producción mediante variables de entorno en Vercel.
 
 ---
 
