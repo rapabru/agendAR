@@ -1,6 +1,6 @@
 # 🚀 AgendAR
 
-[![Release](https://img.shields.io/badge/release-v0.6.0-blue.svg)](https://github.com/rapabru/agendAR/releases)
+[![Release](https://img.shields.io/badge/release-v0.7.0-blue.svg)](https://github.com/rapabru/agendAR/releases)
 [![Security Audit](https://img.shields.io/badge/security%20audit-passed%20%2F%20hardened-brightgreen.svg)](https://github.com/rapabru/agendAR)
 [![Deploy](https://img.shields.io/badge/deployed-Vercel-black.svg)](https://agendar-one.vercel.app)
 [![Database](https://img.shields.io/badge/database-Supabase%20PostgreSQL-emerald.svg)](https://supabase.com)
@@ -40,14 +40,18 @@
   - **OpenAI / Codex** (GPT-4o)
 - Capacidad de generar planes completos estructurados en bloques a partir de un solo prompt.
 
-### 📚 6. Galería de Plantillas Profesionales Integrada
-- Plantillas listas con 1-clic:
+### 📚 6. Creación Asistida con Plantillas Predeterminadas (Estilo Notion)
+- **Hub de Nueva Página (`NewPageModal`)**: Al hacer clic en `+` o "Añadir una página" en la barra lateral, se despliega un selector interactivo para iniciar con un lienzo en blanco, una bóveda cifrada, asistencia de IA o cualquiera de las plantillas predeterminadas estructuradas.
+- **Selector Contextual en Páginas Vacías**: Si abres una página en blanco, el editor despliega tarjetas con las plantillas más populares para aplicarlas al instante con 1 solo clic.
+- **Biblioteca de Plantillas Integrada**:
   - *Planificador Semanal & Timeblocking* (vinculado a Google Calendar).
-  - *Roadmap Ágil de Software / Scrum Sprint*.
+  - *Roadmap Ágil de Software & Sprints* (con tablero Kanban).
   - *Monitor de Hábitos y Metas Diarias*.
   - *Minuta de Reunión & Acuerdos*.
-  - *Bóveda de Seguridad & Credenciales (E2EE)*.
-  - *CRM de Contactos & Leads*.
+  - *Metas & Objetivos Trimestrales (OKRs)*.
+  - *Apuntes de Estudio & Resumen Académico* (Método Cornell).
+  - *Bóveda de Seguridad & Credenciales (E2EE con AES-256)*.
+  - *CRM de Clientes & Oportunidades*.
 
 ### 👥 7. Proyectos Privados y Colaboración Multiusuario
 - Modal para alternar entre **Proyecto Privado** (visible solo para el creador) y **Compartido con el Workspace**.

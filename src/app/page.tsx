@@ -8,6 +8,7 @@ import { BlockEditor } from "@/components/editor/BlockEditor";
 import { GoogleCalendarModal } from "@/components/calendar/GoogleCalendarModal";
 import { VaultUnlockModal } from "@/components/security/VaultUnlockModal";
 import { TemplatesModal } from "@/components/templates/TemplatesModal";
+import { NewPageModal } from "@/components/pages/NewPageModal";
 import { AIAssistantModal } from "@/components/ai/AIAssistantModal";
 import { ShareModal } from "@/components/sharing/ShareModal";
 import { INITIAL_PAGES, INITIAL_BLOCKS } from "@/lib/mock-data";
@@ -58,6 +59,7 @@ export default function AgendARApp() {
   // Modals State
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
   const [isTemplatesModalOpen, setIsTemplatesModalOpen] = useState(false);
+  const [isNewPageModalOpen, setIsNewPageModalOpen] = useState(false);
   const [isAIModalOpen, setIsAIModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
@@ -356,12 +358,15 @@ export default function AgendARApp() {
     }
   };
 
-  // Aplicar plantilla predefinida
-  const handleSelectTemplate = (template: TemplateDefinition) => {
-    const newPageId =
-      typeof crypto !== "undefined" && crypto.randomUUID
+  // Aplicar plantilla predefinida (en nueva página o en la actual si se especifica)
+  const handleSelectTemplate = (template: TemplateDefinition, targetPageId?: string) => {
+    const pageIdToUse =
+      targetPageId ||
+      (typeof crypto !== "undefined" && crypto.randomUUID
         ? crypto.randomUUID()
-        : `tmpl-${Date.now()}`;
+        : `tmpl-${Date.now()}`);
+
+    const isTargetingCurrent = !!targetPageId;
     const newBlockIds: string[] = [];
     const newBlocksMap: Record<string, Block> = {};
 
@@ -381,31 +386,52 @@ export default function AgendARApp() {
         calendarEventDate: item.calendarEventDate,
         createdAt: Date.now(),
         updatedAt: Date.now(),
-        parentId: newPageId,
+        parentId: pageIdToUse,
       };
     });
 
-    const newPage: PageItem = {
-      id: newPageId,
-      title: template.name,
-      icon: template.icon,
-      isFavorite: false,
-      isEncrypted: !!template.isEncrypted,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-      blockIds: newBlockIds,
-    };
+    if (isTargetingCurrent) {
+      const updatedPages = pages.map((p) =>
+        p.id === pageIdToUse
+          ? {
+              ...p,
+              title: template.name,
+              icon: template.icon,
+              isEncrypted: !!template.isEncrypted,
+              blockIds: newBlockIds,
+              updatedAt: Date.now(),
+            }
+          : p
+      );
+      const updatedBlocks = { ...blocks, ...newBlocksMap };
+      setBlocks(updatedBlocks);
+      setPages(updatedPages);
+      storage.saveBlocks(updatedBlocks);
+      storage.savePages(updatedPages);
+      showToast(`Plantilla "${template.name}" aplicada con éxito.`);
+    } else {
+      const newPage: PageItem = {
+        id: pageIdToUse,
+        title: template.name,
+        icon: template.icon,
+        isFavorite: false,
+        isEncrypted: !!template.isEncrypted,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        blockIds: newBlockIds,
+      };
 
-    const updatedBlocks = { ...blocks, ...newBlocksMap };
-    const updatedPages = [...pages, newPage];
+      const updatedBlocks = { ...blocks, ...newBlocksMap };
+      const updatedPages = [...pages, newPage];
 
-    setBlocks(updatedBlocks);
-    setPages(updatedPages);
-    setActivePageId(newPageId);
+      setBlocks(updatedBlocks);
+      setPages(updatedPages);
+      setActivePageId(pageIdToUse);
 
-    storage.saveBlocks(updatedBlocks);
-    storage.savePages(updatedPages);
-    showToast(`Plantilla "${template.name}" cargada con éxito.`);
+      storage.saveBlocks(updatedBlocks);
+      storage.savePages(updatedPages);
+      showToast(`Plantilla "${template.name}" cargada con éxito.`);
+    }
   };
 
   // Aplicar bloques generados por el Asistente IA
@@ -481,6 +507,7 @@ export default function AgendARApp() {
         activePageId={activePageId}
         onSelectPage={setActivePageId}
         onCreatePage={handleCreatePage}
+        onOpenNewPageModal={() => setIsNewPageModalOpen(true)}
         onDeletePage={handleDeletePage}
         onOpenCalendarModal={() => setIsCalendarModalOpen(true)}
         onOpenTemplates={() => setIsTemplatesModalOpen(true)}
@@ -632,8 +659,20 @@ export default function AgendARApp() {
           onSyncCalendarBlock={handleSyncCalendarBlock}
           isUnlocked={!!unlockedVaults[activePage.id]}
           onUnlockVault={() => setIsVaultModalOpen(true)}
+          onApplyTemplate={(tpl) => handleSelectTemplate(tpl, activePage.id)}
+          onOpenTemplatesModal={() => setIsTemplatesModalOpen(true)}
         />
       </main>
+
+      {/* New Page & Template Chooser Modal */}
+      <NewPageModal
+        isOpen={isNewPageModalOpen}
+        onClose={() => setIsNewPageModalOpen(false)}
+        onCreateBlankPage={(isEncrypted) => handleCreatePage(isEncrypted)}
+        onSelectTemplate={(tpl) => handleSelectTemplate(tpl)}
+        onOpenAIModal={() => setIsAIModalOpen(true)}
+        onOpenTemplatesGallery={() => setIsTemplatesModalOpen(true)}
+      />
 
       {/* Google Calendar Modal */}
       <GoogleCalendarModal

@@ -5,6 +5,30 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ---
 
+## [0.7.0] - 2026-10-14
+
+### 🚀 Añadido
+- **Selector de Plantillas Predeterminadas al Crear Páginas (`NewPageModal`)**:
+  - Modal interactivo de creación de página que se despliega automáticamente al pulsar `+` o "Añadir una página" en la barra lateral.
+  - Selección rápida de modo de inicio:
+    - 📄 **Página en blanco**: Lienzo limpio y despejado para redacción libre.
+    - 🔒 **Bóveda Cifrada (E2EE)**: Creación de página protegida con AES-256-GCM.
+    - 🤖 **Generar con IA**: Apertura directa del generador asistido para estructurar notas desde un prompt.
+  - Galería integrada de plantillas predeterminadas en tarjetas con categoría, icono, descripción y conteo de bloques.
+  - Filtro interactivo por categorías (*Todas, Productividad, Desarrollo, Gestión, Seguridad*).
+- **Selector Notion-Style en Páginas Vacías (`BlockEditor`)**:
+  - Detección inteligente de páginas recién creadas o sin contenido.
+  - Despliegue de un panel de bienvenida contextual con plantillas recomendadas con 1 solo clic.
+  - Aplicación instantánea de plantillas sobre la página actual sin duplicar páginas innecesariamente.
+  - Desaparición suave del selector al comenzar a escribir o añadir bloques.
+- **Nuevas Plantillas Predeterminadas en la Biblioteca**:
+  - 🎯 **Metas & Objetivos Trimestrales (OKRs)**: Estructura de objetivos y resultados clave medibles (Q4).
+  - 📚 **Apuntes de Estudio & Resumen Académico**: Plantilla basada en el Método Cornell para apuntes, conceptos, código y preguntas de autoevaluación.
+- **Navegación y UX en Sidebar**:
+  - Botón interactivo "+ Añadir una página" al pie de la lista de páginas para facilitar la creación en un solo clic.
+
+---
+
 ## [0.6.0] - 2026-10-14
 
 ### 🛡️ Seguridad y Blindaje Integral (Security Audit & Remediation)

@@ -20,9 +20,11 @@ import {
   Database,
   ArrowUp,
   ArrowDown,
+  Layers,
 } from "lucide-react";
 import { DatabaseViewComponent } from "../database/DatabaseView";
 import { INITIAL_DATABASE, INITIAL_DATABASE_ROWS } from "@/lib/mock-data";
+import { TEMPLATE_LIBRARY, TemplateDefinition } from "@/lib/templates";
 
 interface BlockEditorProps {
   page: PageItem;
@@ -35,6 +37,8 @@ interface BlockEditorProps {
   onSyncCalendarBlock: (block: Block) => void;
   isUnlocked: boolean;
   onUnlockVault: () => void;
+  onApplyTemplate?: (template: TemplateDefinition) => void;
+  onOpenTemplatesModal?: () => void;
 }
 
 export const BlockEditor: React.FC<BlockEditorProps> = ({
@@ -48,8 +52,16 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({
   onSyncCalendarBlock,
   isUnlocked,
   onUnlockVault,
+  onApplyTemplate,
+  onOpenTemplatesModal,
 }) => {
   const [activeSlashMenuBlockId, setActiveSlashMenuBlockId] = useState<string | null>(null);
+
+  const isBlankPage =
+    blocks.length === 0 ||
+    (blocks.length === 1 &&
+      blocks[0].type === "paragraph" &&
+      (!blocks[0].content || blocks[0].content.trim() === ""));
 
   // Si la página es cifrada y no está desbloqueada
   if (page.isEncrypted && !isUnlocked) {
@@ -97,6 +109,59 @@ export const BlockEditor: React.FC<BlockEditorProps> = ({
           className="w-full bg-transparent text-3xl md:text-4xl font-extrabold outline-none text-[#e3e2e0] placeholder-gray-600 tracking-tight"
         />
       </div>
+
+      {/* Starter Template Chooser for New / Empty Pages */}
+      {isBlankPage && (
+        <div className="my-6 p-5 rounded-2xl bg-[#202020] border border-[#2d2d2d] shadow-lg animate-in fade-in duration-200">
+          <div className="flex items-center justify-between mb-3.5">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-blue-400" />
+              <span className="text-xs font-semibold text-gray-300 uppercase tracking-wider">
+                Comenzar con una plantilla predeterminada
+              </span>
+            </div>
+            {onOpenTemplatesModal && (
+              <button
+                onClick={onOpenTemplatesModal}
+                className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1 font-medium transition"
+              >
+                <Layers className="w-3.5 h-3.5" />
+                <span>Ver todas las plantillas →</span>
+              </button>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+            {TEMPLATE_LIBRARY.slice(0, 6).map((tpl) => (
+              <button
+                key={tpl.id}
+                onClick={() => onApplyTemplate && onApplyTemplate(tpl)}
+                className="flex items-start gap-3 p-3 rounded-xl bg-[#252525] hover:bg-[#2c2c2c] border border-[#333333] hover:border-blue-500/40 text-left transition group shadow-sm"
+              >
+                <span className="text-2xl shrink-0 group-hover:scale-110 transition">{tpl.icon}</span>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs font-semibold text-white group-hover:text-blue-400 transition truncate">
+                      {tpl.name}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-gray-400 line-clamp-1 mt-0.5">{tpl.description}</p>
+                </div>
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-3.5 pt-3 border-t border-[#2c2c2c] flex items-center justify-between text-xs text-gray-500">
+            <span>O presiona aquí para escribir en una página en blanco</span>
+            <button
+              onClick={() => onAddBlock("paragraph")}
+              className="px-2.5 py-1 rounded bg-[#2a2a2a] hover:bg-[#333333] text-gray-300 hover:text-white transition"
+            >
+              Lienzo en blanco
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Block List */}
       <div className="space-y-2">

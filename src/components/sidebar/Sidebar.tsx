@@ -29,6 +29,7 @@ interface SidebarProps {
   activePageId: string;
   onSelectPage: (id: string) => void;
   onCreatePage: (isEncrypted?: boolean) => void;
+  onOpenNewPageModal?: () => void;
   onDeletePage: (id: string) => void;
   onOpenCalendarModal: () => void;
   onOpenTemplates: () => void;
@@ -47,6 +48,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   activePageId,
   onSelectPage,
   onCreatePage,
+  onOpenNewPageModal,
   onDeletePage,
   onOpenCalendarModal,
   onOpenTemplates,
@@ -183,9 +185,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <span>Páginas</span>
               </div>
               <button
-                onClick={() => onCreatePage(false)}
-                title="Añadir una página"
-                className="hover:text-[#e3e2e0] p-0.5 hover:bg-[#2c2c2c] rounded"
+                onClick={onOpenNewPageModal || (() => onCreatePage(false))}
+                title="Añadir una página (elegir plantilla o en blanco)"
+                className="hover:text-[#e3e2e0] p-0.5 hover:bg-[#2c2c2c] rounded transition"
               >
                 <Plus className="w-3.5 h-3.5" />
               </button>
@@ -202,6 +204,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     onDelete={() => onDeletePage(page.id)}
                   />
                 ))}
+
+                <button
+                  onClick={onOpenNewPageModal || (() => onCreatePage(false))}
+                  className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-xs text-gray-400 hover:bg-[#2c2c2c] hover:text-[#e3e2e0] transition text-left mt-1 group"
+                >
+                  <Plus className="w-3.5 h-3.5 group-hover:text-blue-400 transition" />
+                  <span>Añadir una página</span>
+                </button>
               </div>
             )}
           </div>
