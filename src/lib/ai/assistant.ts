@@ -81,7 +81,7 @@ export class AIAssistantClient {
    * Llamada a Google Gemini API v1beta (compatible con la capa gratuita de Google AI Studio)
    */
   private async callGeminiAPI(prompt: string, apiKey: string): Promise<AIGenerationResponse> {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 
     const systemInstruction = `
 Eres el asistente inteligente de AgendAR (un clon avanzado de Notion).
@@ -91,7 +91,10 @@ Responde de forma clara y concisa en español.
 
     const res = await fetch(url, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": apiKey,
+      },
       body: JSON.stringify({
         contents: [{ parts: [{ text: `${systemInstruction}\n\nInstrucción: ${prompt}` }] }],
         generationConfig: {

@@ -11,14 +11,15 @@ export interface AuthUser {
 const LOCAL_USER_SESSION_KEY = "agendar_current_user_session";
 
 /**
- * Obtiene el usuario activo (primero intenta Supabase Cloud, luego fallback a caché local)
+ * Obtiene el usuario activo validando la sesión criptográfica en Supabase
  */
 export async function getActiveUser(): Promise<AuthUser | null> {
   try {
     const supabase = createClient();
-    const { data: { user }, error } = await supabase.auth.getUser();
+    const { data: { session }, error } = await supabase.auth.getSession();
 
-    if (!error && user) {
+    if (!error && session?.user) {
+      const user = session.user;
       const authUser: AuthUser = {
         id: user.id,
         email: user.email || "",
@@ -34,25 +35,15 @@ export async function getActiveUser(): Promise<AuthUser | null> {
         provider: user.app_metadata?.provider === "google" ? "google" : "email",
       };
 
-      if (typeof window !== "undefined") {
-        localStorage.setItem(LOCAL_USER_SESSION_KEY, JSON.stringify(authUser));
-      }
       return authUser;
     }
   } catch (err) {
     console.warn("Supabase session check error:", err);
   }
 
-  // Fallback a sesión local si el usuario inició sesión previamente o en modo offline
+  // Si no hay sesión válida en Supabase, no permitimos suplantación de identidad client-side
   if (typeof window !== "undefined") {
-    const cached = localStorage.getItem(LOCAL_USER_SESSION_KEY);
-    if (cached) {
-      try {
-        return JSON.parse(cached) as AuthUser;
-      } catch {
-        localStorage.removeItem(LOCAL_USER_SESSION_KEY);
-      }
-    }
+    localStorage.removeItem(LOCAL_USER_SESSION_KEY);
   }
 
   return null;

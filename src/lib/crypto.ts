@@ -136,3 +136,57 @@ export async function sha256(text: string): Promise<string> {
   const hashBuffer = await crypto.subtle.digest("SHA-256", enc.encode(text));
   return bufferToBase64(hashBuffer);
 }
+
+export const VAULT_ENC_PREFIX = "ENC:";
+const VAULT_CANARY_MAGIC = "AGENDAR_VAULT_CANARY_V1";
+
+/**
+ * Determina si un bloque contiene payload cifrado E2EE
+ */
+export function isEncryptedContent(content: string): boolean {
+  return typeof content === "string" && content.startsWith(VAULT_ENC_PREFIX);
+}
+
+/**
+ * Cifra el texto plano de un bloque y lo serializa con prefijo seguro
+ */
+export async function encryptBlockContent(plainText: string, passphrase: string): Promise<string> {
+  const payload = await encryptData(plainText, passphrase);
+  return `${VAULT_ENC_PREFIX}${JSON.stringify(payload)}`;
+}
+
+/**
+ * Descifra el contenido de un bloque cifrado. Lanza error si la clave es incorrecta (tag auth AES-GCM inválido)
+ */
+export async function decryptBlockContent(encString: string, passphrase: string): Promise<string> {
+  if (!isEncryptedContent(encString)) return encString;
+  try {
+    const rawJson = encString.slice(VAULT_ENC_PREFIX.length);
+    const payload = JSON.parse(rawJson) as EncryptedPayload;
+    return await decryptData(payload, passphrase);
+  } catch {
+    throw new Error("Contraseña de bóveda incorrecta o datos cifrados corruptos");
+  }
+}
+
+/**
+ * Genera un testigo criptográfico (canary) para validar contraseñas de bóvedas
+ */
+export async function createVaultCanary(passphrase: string): Promise<string> {
+  return await encryptBlockContent(VAULT_CANARY_MAGIC, passphrase);
+}
+
+/**
+ * Valida criptográficamente una contraseña contra un canary o bloque cifrado existente
+ */
+export async function verifyVaultPassphrase(passphrase: string, canaryOrEncBlock: string): Promise<boolean> {
+  try {
+    const decrypted = await decryptBlockContent(canaryOrEncBlock, passphrase);
+    if (canaryOrEncBlock.includes(VAULT_CANARY_MAGIC)) {
+      return decrypted === VAULT_CANARY_MAGIC;
+    }
+    return typeof decrypted === "string";
+  } catch {
+    return false;
+  }
+}

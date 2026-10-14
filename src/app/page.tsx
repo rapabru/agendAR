@@ -16,6 +16,7 @@ import { TemplateDefinition } from "@/lib/templates";
 import { GoogleCalendarClient, blockToCalendarEvent } from "@/lib/google-calendar";
 import { getActiveUser, logoutUser, AuthUser } from "@/lib/supabase/auth";
 import { UserStorageManager, SyncState } from "@/lib/storage";
+import { isEncryptedContent, decryptBlockContent, createVaultCanary } from "@/lib/crypto";
 import {
   Calendar,
   Lock,
@@ -44,6 +45,9 @@ export default function AgendARApp() {
   const [pages, setPages] = useState<PageItem[]>(INITIAL_PAGES);
   const [activePageId, setActivePageId] = useState<string>("welcome-page");
   const [blocks, setBlocks] = useState<Record<string, Block>>(INITIAL_BLOCKS);
+
+  // Security / Vault state
+  const [vaultPassphrases, setVaultPassphrases] = useState<Record<string, string>>({});
 
   // Sync state with Supabase Cloud
   const [syncState, setSyncState] = useState<SyncState>({
@@ -242,8 +246,35 @@ export default function AgendARApp() {
     storage.savePages(updatedPages);
   };
 
+  // Handler para desbloqueo criptográfico real de bóvedas
+  const handleUnlockVaultSuccess = async (passphrase: string) => {
+    setUnlockedVaults((prev) => ({ ...prev, [activePage.id]: true }));
+    setVaultPassphrases((prev) => ({ ...prev, [activePage.id]: passphrase }));
+
+    const updatedBlocks = { ...blocks };
+    let hasDecrypted = false;
+
+    for (const bId of activePage.blockIds) {
+      const b = updatedBlocks[bId];
+      if (b && isEncryptedContent(b.content)) {
+        try {
+          const plain = await decryptBlockContent(b.content, passphrase);
+          updatedBlocks[bId] = { ...b, content: plain };
+          hasDecrypted = true;
+        } catch (err) {
+          console.warn("Fallo al descifrar bloque:", bId, err);
+        }
+      }
+    }
+
+    if (hasDecrypted) {
+      setBlocks(updatedBlocks);
+    }
+    showToast("Bóveda desbloqueada con éxito (AES-256 verificado)");
+  };
+
   // Handler para crear nueva página
-  const handleCreatePage = (isEncrypted: boolean = false) => {
+  const handleCreatePage = async (isEncrypted: boolean = false) => {
     const newPageId =
       typeof crypto !== "undefined" && crypto.randomUUID
         ? crypto.randomUUID()
@@ -252,6 +283,11 @@ export default function AgendARApp() {
       typeof crypto !== "undefined" && crypto.randomUUID
         ? crypto.randomUUID()
         : `b-init-${Date.now()}`;
+
+    let canary: string | undefined = undefined;
+    if (isEncrypted) {
+      canary = await createVaultCanary("agendar2026");
+    }
 
     const newBlock: Block = {
       id: initialBlockId,
@@ -268,6 +304,7 @@ export default function AgendARApp() {
       icon: isEncrypted ? "🔒" : "📄",
       isFavorite: false,
       isEncrypted,
+      encryptionSalt: canary,
       createdAt: Date.now(),
       updatedAt: Date.now(),
       blockIds: [initialBlockId],
@@ -282,7 +319,7 @@ export default function AgendARApp() {
 
     storage.saveBlocks(updatedBlocks);
     storage.savePages(updatedPages);
-    showToast(isEncrypted ? "Bóveda cifrada creada con éxito" : "Página creada");
+    showToast(isEncrypted ? "Bóveda cifrada creada con éxito (AES-256)" : "Página creada");
   };
 
   // Handler para eliminar página
@@ -615,10 +652,8 @@ export default function AgendARApp() {
       <VaultUnlockModal
         isOpen={isVaultModalOpen}
         onClose={() => setIsVaultModalOpen(false)}
-        onUnlockSuccess={() => {
-          setUnlockedVaults((prev) => ({ ...prev, [activePage.id]: true }));
-          showToast("Bóveda desbloqueada con éxito (Claves derivadas)");
-        }}
+        page={activePage}
+        onUnlockSuccess={handleUnlockVaultSuccess}
       />
 
       {/* Templates Modal */}

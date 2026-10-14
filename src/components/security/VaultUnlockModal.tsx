@@ -2,16 +2,22 @@
 
 import React, { useState } from "react";
 import { Lock, Unlock, KeyRound, X, AlertTriangle, ShieldCheck } from "lucide-react";
+import { verifyVaultPassphrase } from "@/lib/crypto";
+import { PageItem } from "@/lib/types";
 
 interface VaultUnlockModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onUnlockSuccess: () => void;
+  page?: PageItem;
+  canaryString?: string;
+  onUnlockSuccess: (passphrase: string) => void;
 }
 
 export const VaultUnlockModal: React.FC<VaultUnlockModalProps> = ({
   isOpen,
   onClose,
+  page,
+  canaryString,
   onUnlockSuccess,
 }) => {
   const [passphrase, setPassphrase] = useState("");
@@ -22,7 +28,8 @@ export const VaultUnlockModal: React.FC<VaultUnlockModalProps> = ({
 
   const handleUnlock = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!passphrase.trim()) {
+    const cleanPassphrase = passphrase.trim();
+    if (!cleanPassphrase) {
       setError("Por favor introduce la contraseña de la bóveda.");
       return;
     }
@@ -30,12 +37,26 @@ export const VaultUnlockModal: React.FC<VaultUnlockModalProps> = ({
     setIsVerifying(true);
     setError(null);
 
-    // Verificación criptográfica (derivación de clave cliente)
-    setTimeout(() => {
+    try {
+      const verificationTarget = canaryString || page?.encryptionSalt;
+
+      // Si existe un canary o testigo cifrado previo, verificamos la autenticidad con AES-GCM
+      if (verificationTarget) {
+        const isValid = await verifyVaultPassphrase(cleanPassphrase, verificationTarget);
+        if (!isValid) {
+          setError("Contraseña incorrecta. La clave criptográfica derivada no coincide.");
+          setIsVerifying(false);
+          return;
+        }
+      }
+
       setIsVerifying(false);
-      onUnlockSuccess();
+      onUnlockSuccess(cleanPassphrase);
       onClose();
-    }, 600);
+    } catch {
+      setError("Error al derivar las claves criptográficas con PBKDF2.");
+      setIsVerifying(false);
+    }
   };
 
   return (

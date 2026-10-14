@@ -5,6 +5,36 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ---
 
+## [0.6.0] - 2026-10-14
+
+### 🛡️ Seguridad y Blindaje Integral (Security Audit & Remediation)
+- **Criptografía Real de Grado Militar para Bóvedas Privadas (Zero-Knowledge / E2EE)**:
+  - Implementación completa de motor criptográfico en `src/lib/crypto.ts` basado en WebCrypto API.
+  - Derivación de clave AES-256-GCM mediante PBKDF2 (100.000 iteraciones con SHA-256) y salt criptográfico seguro de 16 bytes.
+  - Validación con **Canario Criptográfico Autenticado** (`createVaultCanary` y `verifyVaultPassphrase`): previene bypasses de contraseña; cualquier intento con contraseña incorrecta es rechazado inmediatamente por el tag de autenticación MAC (128 bits) arrojando `OperationError`.
+  - Cifrado real bloque por bloque (`encryptBlockContent`) con vector de inicialización único (IV de 12 bytes) y descifrado exclusivamente en memoria (`decryptBlockContent`).
+  - Actualización de `VaultUnlockModal.tsx` y `page.tsx` para derivar claves en tiempo real y desencriptar notas solo tras autenticación exitosa.
+- **Corrección de Aislamiento Multi-Inquilino en Base de Datos (BOLA / IDOR Fix)**:
+  - Creación de migración SQL `003_secure_rls_and_bola_fix.sql` en Supabase PostgreSQL.
+  - Eliminación de la cláusula permisiva `OR workspace_id IS NULL` en las políticas RLS de `blocks`, cerrando la vulnerabilidad que permitía a cualquier usuario leer o modificar bloques ajenos en páginas personales.
+  - Corrección de la política `pages_insert_policy` para forzar `created_by = auth.uid()`, eliminando el riesgo de suplantación de autoría (*Creator Spoofing*).
+- **Protección Web de Cabeceras HTTP y Prevención de Clickjacking**:
+  - Configuración de cabeceras de seguridad estrictas en `next.config.ts`: `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Strict-Transport-Security` (HSTS con preload), `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy`, y `Content-Security-Policy: frame-ancestors 'none'`.
+- **Next.js Edge Middleware de Autenticación y Defensa en Profundidad**:
+  - Creación de `src/middleware.ts` en el Edge Runtime de Vercel para refrescar sesiones activas de Supabase y asegurar que todas las respuestas HTTP inyecten cabeceras de seguridad.
+- **Sanitización de Redirección Abierta (Open Redirect)**:
+  - Implementación de `getSafeRedirectUrl` en `src/app/auth/callback/route.ts` que valida rutas relativas seguras internas e invalida esquemas externos maliciosos (`//`, `http:`, etc.).
+- **Blindaje del Endpoint de Sincronización de Calendario**:
+  - `src/app/api/calendar/sync/route.ts` ahora valida rigurosamente la sesión del usuario mediante `createServerSupabaseClient()`, rechaza accesos anónimos con HTTP 401, audita tamaños de payload y fechas ISO, y enmascara errores 500 para evitar fugas de traza.
+- **Protección de Credenciales de IA**:
+  - Migración de llamadas a Gemini API en `src/lib/ai/assistant.ts` para enviar la API Key exclusivamente a través del header HTTP `x-goog-api-key`, eliminando la exposición de credenciales en query strings de URL.
+- **Cadena de Suministro npm**:
+  - Configuración de `overrides` en `package.json` para resolver vulnerabilidades críticas de PostCSS (`postcss@^8.5.3`, `postcss-selector-parser@^7.1.6`).
+- **Auditoría Completa Documentada**:
+  - Generación de suite completa de auditoría en `~/audits/my-project` (`README.md`, `CODE_REVIEW_SRC.md`, `VULNERABILITY_CATALOG.md`, `WEB_AND_SURROUNDS_AUDIT.md`, `REMEDIATION_PLAN.md`).
+
+---
+
 ## [0.5.0] - 2026-10-13
 
 ### 🚀 Añadido

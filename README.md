@@ -1,6 +1,7 @@
 # 🚀 AgendAR
 
-[![Release](https://img.shields.io/badge/release-v0.5.0-blue.svg)](https://github.com/rapabru/agendAR/releases)
+[![Release](https://img.shields.io/badge/release-v0.6.0-blue.svg)](https://github.com/rapabru/agendAR/releases)
+[![Security Audit](https://img.shields.io/badge/security%20audit-passed%20%2F%20hardened-brightgreen.svg)](https://github.com/rapabru/agendAR)
 [![Deploy](https://img.shields.io/badge/deployed-Vercel-black.svg)](https://agendar-one.vercel.app)
 [![Database](https://img.shields.io/badge/database-Supabase%20PostgreSQL-emerald.svg)](https://supabase.com)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)

@@ -27,6 +27,7 @@ export const INITIAL_PAGES: PageItem[] = [
     icon: "🔒",
     isFavorite: false,
     isEncrypted: true,
+    encryptionSalt: 'ENC:{"cipherText":"z9g0mcf/VQpT+z9w4HoVJmvueb8d2xmneFexPryWx9n9LHSEBFdU","iv":"ed1U2JEVKcp3hLLW","salt":"mivLe5sw4LbK2f6PIiNRcw=="}',
     createdAt: Date.now() - 43200000,
     updatedAt: Date.now() - 7200000,
     blockIds: ["b-vault-1", "b-vault-2", "b-vault-3"],
@@ -127,18 +128,18 @@ export const INITIAL_BLOCKS: Record<string, Block> = {
     updatedAt: Date.now(),
   },
 
-  // Bóveda
+  // Bóveda (Cifrada con AES-256-GCM / PBKDF2)
   "b-vault-1": {
     id: "b-vault-1",
     type: "heading_1",
-    content: "Información Confidencial Cifrada 🔐",
+    content: 'ENC:{"cipherText":"jli2NjvQVqkTldTa00gkIqY+WVQFTsPnKb03urD/BFgHR5H6sfK64akPuQUwIYaAhoj8PG0YMPh25UY35bw=","iv":"PFakUhQ4XYOiuFGt","salt":"lWynemC8Pi24rViN2z5LiQ=="}',
     createdAt: Date.now(),
     updatedAt: Date.now(),
   },
   "b-vault-2": {
     id: "b-vault-2",
     type: "callout",
-    content: "Esta nota está protegida con cifrado cliente AES-GCM (256 bits). Solo quien tenga la clave de desbloqueo puede visualizar o alterar estos datos.",
+    content: 'ENC:{"cipherText":"BEy/SV5TExbTrp7LHUQikAXQ+jU53RJAEhjMqS6kWOpr/XaLHkYdOj+lXdYi8+gMkVcNqnUyAeT/u7J2xj1wuKd5A/hCEA5RMOZYekfrSklq3+LVy7gXZL0sQNym6XqXSezrBCsTr/Lz6+RNkzngW925aD78SyRM2xDk0yGBvDW7zOhv2NBGsgr+s+7yuQd3iYCRufx26UZAEJu1XTrIwA==","iv":"a6iLXHlrNq5wGkoN","salt":"1l7HVTJlDHM6QpXEmPF5jw=="}',
     icon: "🛡️",
     createdAt: Date.now(),
     updatedAt: Date.now(),
@@ -147,7 +148,7 @@ export const INITIAL_BLOCKS: Record<string, Block> = {
     id: "b-vault-3",
     type: "code",
     language: "json",
-    content: "{\n  \"api_key_production\": \"sk_live_98124912941041920\",\n  \"seed_phrase\": \"apple mountain river galaxy silent winter breeze flame orbit crystal\",\n  \"status\": \"VERIFIED_ZERO_KNOWLEDGE\"\n}",
+    content: 'ENC:{"cipherText":"Wj8YFzXgyP+BwMO9K6ePyJrCxN4y4P6z8PUXFYse//dZClNIIaBIf6WmnPsV398pd0kc2qT9xjTiM4ydR+t0107MS4kn/X6VYMc2KsYKV7GZ74M7q+siuuGt8p65g24tHz2XpP/YaVLhgoehBYVWhEFL1QZIh3d7Ui2+GHFBDr+kfGZkBq1/bjMawgaKu6y7TkHRJI1MeybwoNwal5FzRTnYON0/DhSKHoqvJlPUdctFWudatoR9MrvWg9ejFpWG2wMyTypcoQ==","iv":"ELSUF7CtsTLACUQv","salt":"AJfHoj+RV/+eMN9MT921PQ=="}',
     createdAt: Date.now(),
     updatedAt: Date.now(),
   },
