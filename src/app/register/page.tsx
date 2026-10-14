@@ -50,52 +50,54 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#191919] flex flex-col justify-center items-center px-4 select-none">
-      <div className="w-full max-w-sm">
+    <div className="min-h-screen bg-[#0c0d12] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-950/30 via-[#0c0d12] to-[#0c0d12] flex flex-col justify-center items-center px-4 select-none py-12 text-[#f0f2f7]">
+      <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="w-12 h-12 rounded-xl bg-blue-600/20 text-blue-400 border border-blue-500/30 flex items-center justify-center font-bold text-xl mx-auto mb-3">
-            A
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 p-[1px] shadow-xl shadow-cyan-950/50 mx-auto mb-4">
+            <div className="w-full h-full bg-[#0c0d12] rounded-[15px] flex items-center justify-center font-bold text-xl text-white">
+              A
+            </div>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#e3e2e0]">Crear cuenta en AgendAR</h1>
-          <p className="text-xs text-gray-400 mt-1">Espacio seguro conectado a tu base de datos Supabase</p>
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white">Crear cuenta en AgendAR</h1>
+          <p className="text-xs text-slate-400 mt-1.5">Espacio seguro conectado a tu base de datos Supabase</p>
         </div>
 
-        <div className="bg-[#202020] border border-[#2f2f2f] rounded-2xl p-6 shadow-2xl space-y-4">
-          <form onSubmit={handleSubmit} className="space-y-3">
+        <div className="bg-[#13141d]/90 backdrop-blur-2xl border border-white/[0.08] rounded-3xl p-7 shadow-2xl space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-xs text-gray-300 font-medium mb-1 block">Nombre Completo</label>
+              <label className="text-xs text-slate-300 font-medium mb-1.5 block">Nombre Completo</label>
               <div className="relative">
-                <User className="w-4 h-4 text-gray-500 absolute left-3 top-2.5" />
+                <User className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Tu Nombre"
                   required
-                  className="w-full bg-[#181818] border border-[#383838] rounded-lg pl-9 pr-3 py-2 text-xs text-white outline-none focus:border-blue-500 transition"
+                  className="w-full bg-[#181a24] border border-white/[0.08] focus:border-cyan-500/60 focus:ring-1 focus:ring-cyan-500/30 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-white outline-none placeholder-slate-600 transition"
                 />
               </div>
             </div>
 
             <div>
-              <label className="text-xs text-gray-300 font-medium mb-1 block">Correo de Gmail / Trabajo</label>
+              <label className="text-xs text-slate-300 font-medium mb-1.5 block">Correo de Gmail / Trabajo</label>
               <div className="relative">
-                <Mail className="w-4 h-4 text-gray-500 absolute left-3 top-2.5" />
+                <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="tu.cuenta@gmail.com"
                   required
-                  className="w-full bg-[#181818] border border-[#383838] rounded-lg pl-9 pr-3 py-2 text-xs text-white outline-none focus:border-blue-500 transition"
+                  className="w-full bg-[#181a24] border border-white/[0.08] focus:border-cyan-500/60 focus:ring-1 focus:ring-cyan-500/30 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-white outline-none placeholder-slate-600 transition"
                 />
               </div>
             </div>
 
             <div>
-              <label className="text-xs text-gray-300 font-medium mb-1 block">Contraseña</label>
+              <label className="text-xs text-slate-300 font-medium mb-1.5 block">Contraseña</label>
               <div className="relative">
-                <Lock className="w-4 h-4 text-gray-500 absolute left-3 top-2.5" />
+                <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
                 <input
                   type="password"
                   value={password}
@@ -103,7 +105,7 @@ export default function RegisterPage() {
                   placeholder="Al menos 6 caracteres"
                   required
                   minLength={6}
-                  className="w-full bg-[#181818] border border-[#383838] rounded-lg pl-9 pr-3 py-2 text-xs text-white outline-none focus:border-blue-500 transition"
+                  className="w-full bg-[#181a24] border border-white/[0.08] focus:border-cyan-500/60 focus:ring-1 focus:ring-cyan-500/30 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-white outline-none placeholder-slate-600 transition"
                 />
               </div>
             </div>
@@ -111,30 +113,30 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-lg shadow-emerald-600/20 mt-2"
+              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 disabled:opacity-50 text-white font-medium text-xs py-3 rounded-xl transition shadow-lg shadow-emerald-950/40 mt-3"
             >
               <span>{isLoading ? "Creando espacio..." : "Crear Cuenta"}</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-4 h-4" />
             </button>
           </form>
 
           {errorMessage && (
-            <div className="flex items-start gap-2 p-2.5 rounded-lg bg-red-500/10 border border-red-500/20 text-[11px] text-red-300">
-              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-              <span>{errorMessage}</span>
+            <div className="flex items-start gap-2.5 p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-[11px] text-red-300">
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-400" />
+              <span className="leading-relaxed">{errorMessage}</span>
             </div>
           )}
 
           {successMessage && (
-            <div className="flex items-start gap-2 p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-[11px] text-emerald-300">
-              <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
-              <span>{successMessage}</span>
+            <div className="flex items-start gap-2.5 p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-[11px] text-emerald-300">
+              <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-400" />
+              <span className="leading-relaxed">{successMessage}</span>
             </div>
           )}
 
-          <div className="pt-3 border-t border-[#2a2a2a] text-center text-xs text-gray-400">
+          <div className="pt-3.5 border-t border-white/[0.06] text-center text-xs text-slate-400">
             ¿Ya tienes cuenta?{" "}
-            <Link href="/login" className="text-blue-400 hover:underline font-medium">
+            <Link href="/login" className="text-cyan-400 hover:underline font-medium">
               Inicia sesión
             </Link>
           </div>

@@ -1,10 +1,23 @@
 import type { Metadata } from "next";
+import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "AgendAR - Espacio de Trabajo con Notas, Bases de Datos y Google Calendar",
+  title: "AgendAR - Espacio de Trabajo Inteligente, Notas y Google Calendar",
   description:
-    "Clon avanzado de Notion con encriptación de extremo a extremo, inicio de sesión seguro y sincronización nativa con Google Calendar.",
+    "El espacio de trabajo colaborativo todo-en-uno con notas estructuradas, bases de datos, bóvedas cifradas E2EE y sincronización con Google Calendar.",
 };
 
 export default function RootLayout({
@@ -13,8 +26,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className="dark">
-      <body className="antialiased bg-[#191919] text-[#e3e2e0]">
+    <html lang="es" className={`dark ${plusJakarta.variable} ${jetbrainsMono.variable}`}>
+      <body className="antialiased font-sans bg-[#0c0d12] text-[#e2e4e9] selection:bg-blue-500/30 selection:text-blue-200">
         {children}
       </body>
     </html>

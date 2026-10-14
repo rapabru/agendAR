@@ -5,6 +5,28 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ---
 
+## [0.8.0] - 2026-10-14
+
+### 🎨 Rediseño Visual Integral & Nueva Identidad Obsidian Dark
+- **Nueva Tipografía de Alto Rendimiento**:
+  - Incorporación de **Plus Jakarta Sans** (`--font-sans`) como tipografía principal a través de `next/font/google` con optimización de fuentes sin CLS (*Cumulative Layout Shift*).
+  - Incorporación de **JetBrains Mono** (`--font-mono`) para bloques de código, marcas de tiempo y etiquetas numéricas.
+  - Ajuste tipográfico global con kerning y espaciado de letras refinado (`tracking-[-0.012em]`).
+- **Paleta de Colores Obsidian Dark & Superficies Glassmorphism**:
+  - Reemplazo del tono marrón-grisáceo `#191919`/`#202020` por un fondo negro obsidiana profundo (`#0c0d12`), barra lateral de superficie elegante (`#0f1016`) y tarjetas elevadas (`#13141d`, `#161822`, `#1c1e2b`).
+  - Iluminación ambiental con degradados radiales sutiles (`from-indigo-950/30 via-[#0c0d12] to-[#0c0d12]`).
+  - Bordes translúcidos de precisión (`border-white/[0.06]`, `border-white/[0.08]`) y efectos `backdrop-blur-2xl`.
+  - Acentos de color vibrantes: **Cyan Celestial** (`#38bdf8`), **Índigo Eléctrico** (`#6366f1`), **Esmeralda Vivo** (`#10b981`) y **Púrpura Neón** (`#a855f7`).
+- **Rediseño Completo de Componentes**:
+  - **Barra Lateral (`Sidebar`)**: Logo con gradiente tricolor, contenedores de iconos iluminados (*icon wells*), indicador activo con borde cyan a la izquierda y barra de usuario con avatar en degradado y pulso de estado en tiempo real.
+  - **Barra de Navegación (`Navbar`)**: Barra superior flotante translúcida con píldoras de acción rápida (AI Assistant, Plantillas, Calendario, Bóvedas) con halos de luz.
+  - **Editor de Bloques (`BlockEditor`)**: Título audaz de gran formato (`text-3xl` a `text-5xl`), callouts y bloques de código refinados con esquinas redondeadas (`rounded-2xl`), menú contextual Slash (`/`) estilizado y selector de plantillas vacías con tarjetas Obsidian.
+  - **Vistas de Base de Datos (`DatabaseView`)**: Píldoras de vista de selección (Kanban, Tabla, Calendario) con fondos activos en brillo translúcido, tarjetas de Kanban con badges de estado y bordes de hover en cyan.
+  - **Modales de Sistema**: Rediseño unificado en formato `rounded-3xl` y `backdrop-blur-2xl` para `NewPageModal`, `TemplatesModal`, `VaultUnlockModal`, `GoogleCalendarModal`, `AIAssistantModal` y `ShareModal`.
+  - **Páginas de Acceso (`/login` y `/register`)**: Experiencia de inicio de sesión y registro modernizada con tarjeta de cristal central, botones en gradiente y transiciones suaves.
+
+---
+
 ## [0.7.0] - 2026-10-14
 
 ### 🚀 Añadido

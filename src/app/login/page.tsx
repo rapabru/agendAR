@@ -144,26 +144,28 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#191919] flex flex-col justify-center items-center px-4 select-none py-10">
+    <div className="min-h-screen bg-[#0c0d12] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-950/30 via-[#0c0d12] to-[#0c0d12] flex flex-col justify-center items-center px-4 select-none py-12 text-[#f0f2f7]">
       <div className="w-full max-w-md">
         {/* Brand Header */}
-        <div className="text-center mb-6">
-          <div className="w-12 h-12 rounded-xl bg-blue-600/20 text-blue-400 border border-blue-500/30 flex items-center justify-center font-bold text-xl mx-auto mb-3 shadow-lg shadow-blue-500/10">
-            A
+        <div className="text-center mb-8">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 p-[1px] shadow-xl shadow-cyan-950/50 mx-auto mb-4">
+            <div className="w-full h-full bg-[#0c0d12] rounded-[15px] flex items-center justify-center font-bold text-xl text-white">
+              A
+            </div>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-[#e3e2e0]">AgendAR Cloud</h1>
-          <p className="text-xs text-gray-400 mt-1">
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white">AgendAR Cloud</h1>
+          <p className="text-xs text-slate-400 mt-1.5">
             Espacio de trabajo conectado con base de datos en tiempo real
           </p>
         </div>
 
         {/* Auth Card */}
-        <div className="bg-[#202020] border border-[#2f2f2f] rounded-2xl p-6 shadow-2xl space-y-4">
+        <div className="bg-[#13141d]/90 backdrop-blur-2xl border border-white/[0.08] rounded-3xl p-7 shadow-2xl space-y-5">
           {/* Sign in with Google (OAuth) */}
           <button
             onClick={handleGoogleLogin}
             disabled={isLoading}
-            className="w-full flex items-center justify-center gap-3 bg-[#262626] hover:bg-[#2e2e2e] border border-[#383838] text-white text-xs font-medium py-2.5 rounded-lg transition group shadow-sm"
+            className="w-full flex items-center justify-center gap-3 bg-[#181a24] hover:bg-[#202230] border border-white/[0.08] text-white text-xs font-medium py-3 rounded-xl transition group shadow-sm"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24">
               <path
@@ -187,23 +189,23 @@ export default function LoginPage() {
           </button>
 
           <div className="flex items-center gap-3 my-2">
-            <div className="h-[1px] flex-1 bg-[#2f2f2f]" />
-            <span className="text-[11px] text-gray-500 uppercase tracking-wider">o con tu correo</span>
-            <div className="h-[1px] flex-1 bg-[#2f2f2f]" />
+            <div className="h-[1px] flex-1 bg-white/[0.06]" />
+            <span className="text-[10px] text-slate-500 uppercase tracking-wider font-medium">o con tu correo</span>
+            <div className="h-[1px] flex-1 bg-white/[0.06]" />
           </div>
 
           {/* Navigation Tabs */}
-          <div className="grid grid-cols-3 gap-1 bg-[#181818] p-1 rounded-lg border border-[#2c2c2c] text-xs">
+          <div className="grid grid-cols-3 gap-1 bg-[#181a24] p-1.5 rounded-2xl border border-white/[0.06] text-xs">
             <button
               onClick={() => {
                 setTab("signin");
                 setErrorMessage(null);
                 setSuccessMessage(null);
               }}
-              className={`py-1.5 rounded-md font-medium transition ${
+              className={`py-2 rounded-xl font-medium transition ${
                 tab === "signin"
-                  ? "bg-[#282828] text-white shadow-sm"
-                  : "text-gray-400 hover:text-gray-200"
+                  ? "bg-white/[0.1] text-white shadow-sm ring-1 ring-white/10"
+                  : "text-slate-400 hover:text-white"
               }`}
             >
               Iniciar Sesión
@@ -214,10 +216,10 @@ export default function LoginPage() {
                 setErrorMessage(null);
                 setSuccessMessage(null);
               }}
-              className={`py-1.5 rounded-md font-medium transition ${
+              className={`py-2 rounded-xl font-medium transition ${
                 tab === "signup"
-                  ? "bg-[#282828] text-white shadow-sm"
-                  : "text-gray-400 hover:text-gray-200"
+                  ? "bg-white/[0.1] text-white shadow-sm ring-1 ring-white/10"
+                  : "text-slate-400 hover:text-white"
               }`}
             >
               Crear Cuenta
@@ -228,10 +230,10 @@ export default function LoginPage() {
                 setErrorMessage(null);
                 setSuccessMessage(null);
               }}
-              className={`py-1.5 rounded-md font-medium transition ${
+              className={`py-2 rounded-xl font-medium transition ${
                 tab === "magic"
-                  ? "bg-[#282828] text-white shadow-sm"
-                  : "text-gray-400 hover:text-gray-200"
+                  ? "bg-white/[0.1] text-white shadow-sm ring-1 ring-white/10"
+                  : "text-slate-400 hover:text-white"
               }`}
             >
               Magic Link
@@ -240,35 +242,35 @@ export default function LoginPage() {
 
           {/* Formulario: Iniciar Sesión */}
           {tab === "signin" && (
-            <form onSubmit={handleSignIn} className="space-y-3">
+            <form onSubmit={handleSignIn} className="space-y-3.5">
               <div>
-                <label className="text-xs text-gray-300 font-medium mb-1 block">
+                <label className="text-xs text-slate-300 font-medium mb-1.5 block">
                   Correo Electrónico (Gmail)
                 </label>
                 <div className="relative">
-                  <Mail className="w-4 h-4 text-gray-500 absolute left-3 top-2.5" />
+                  <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="tu.correo@gmail.com"
                     required
-                    className="w-full bg-[#181818] border border-[#383838] rounded-lg pl-9 pr-3 py-2 text-xs text-white outline-none focus:border-blue-500 transition"
+                    className="w-full bg-[#181a24] border border-white/[0.08] focus:border-cyan-500/60 focus:ring-1 focus:ring-cyan-500/30 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-white outline-none placeholder-slate-600 transition"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-xs text-gray-300 font-medium mb-1 block">Contraseña</label>
+                <label className="text-xs text-slate-300 font-medium mb-1.5 block">Contraseña</label>
                 <div className="relative">
-                  <Lock className="w-4 h-4 text-gray-500 absolute left-3 top-2.5" />
+                  <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
                   <input
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••••••"
                     required
-                    className="w-full bg-[#181818] border border-[#383838] rounded-lg pl-9 pr-3 py-2 text-xs text-white outline-none focus:border-blue-500 transition"
+                    className="w-full bg-[#181a24] border border-white/[0.08] focus:border-cyan-500/60 focus:ring-1 focus:ring-cyan-500/30 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-white outline-none placeholder-slate-600 transition"
                   />
                 </div>
               </div>
@@ -276,54 +278,54 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-lg shadow-blue-600/20 mt-3"
+                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 disabled:opacity-50 text-white font-medium text-xs py-3 rounded-xl transition shadow-lg shadow-cyan-950/40 mt-4"
               >
                 <span>{isLoading ? "Iniciando..." : "Entrar a mi Espacio"}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRight className="w-4 h-4" />
               </button>
             </form>
           )}
 
           {/* Formulario: Crear Cuenta */}
           {tab === "signup" && (
-            <form onSubmit={handleSignUp} className="space-y-3">
+            <form onSubmit={handleSignUp} className="space-y-3.5">
               <div>
-                <label className="text-xs text-gray-300 font-medium mb-1 block">Nombre Completo</label>
+                <label className="text-xs text-slate-300 font-medium mb-1.5 block">Nombre Completo</label>
                 <div className="relative">
-                  <UserIcon className="w-4 h-4 text-gray-500 absolute left-3 top-2.5" />
+                  <UserIcon className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
                   <input
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="Tu Nombre"
-                    className="w-full bg-[#181818] border border-[#383838] rounded-lg pl-9 pr-3 py-2 text-xs text-white outline-none focus:border-blue-500 transition"
+                    className="w-full bg-[#181a24] border border-white/[0.08] focus:border-cyan-500/60 focus:ring-1 focus:ring-cyan-500/30 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-white outline-none placeholder-slate-600 transition"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-xs text-gray-300 font-medium mb-1 block">
+                <label className="text-xs text-slate-300 font-medium mb-1.5 block">
                   Correo Electrónico (Gmail)
                 </label>
                 <div className="relative">
-                  <Mail className="w-4 h-4 text-gray-500 absolute left-3 top-2.5" />
+                  <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="tu.correo@gmail.com"
                     required
-                    className="w-full bg-[#181818] border border-[#383838] rounded-lg pl-9 pr-3 py-2 text-xs text-white outline-none focus:border-blue-500 transition"
+                    className="w-full bg-[#181a24] border border-white/[0.08] focus:border-cyan-500/60 focus:ring-1 focus:ring-cyan-500/30 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-white outline-none placeholder-slate-600 transition"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-xs text-gray-300 font-medium mb-1 block">
+                <label className="text-xs text-slate-300 font-medium mb-1.5 block">
                   Contraseña (mínimo 6 caracteres)
                 </label>
                 <div className="relative">
-                  <Lock className="w-4 h-4 text-gray-500 absolute left-3 top-2.5" />
+                  <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
                   <input
                     type="password"
                     value={password}
@@ -331,7 +333,7 @@ export default function LoginPage() {
                     placeholder="••••••••••••"
                     required
                     minLength={6}
-                    className="w-full bg-[#181818] border border-[#383838] rounded-lg pl-9 pr-3 py-2 text-xs text-white outline-none focus:border-blue-500 transition"
+                    className="w-full bg-[#181a24] border border-white/[0.08] focus:border-cyan-500/60 focus:ring-1 focus:ring-cyan-500/30 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-white outline-none placeholder-slate-600 transition"
                   />
                 </div>
               </div>
@@ -339,33 +341,33 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-lg shadow-emerald-600/20 mt-3"
+                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 disabled:opacity-50 text-white font-medium text-xs py-3 rounded-xl transition shadow-lg shadow-emerald-950/40 mt-4"
               >
                 <span>{isLoading ? "Creando cuenta..." : "Crear mi Cuenta y Espacio"}</span>
-                <Sparkles className="w-3.5 h-3.5" />
+                <Sparkles className="w-4 h-4" />
               </button>
             </form>
           )}
 
           {/* Formulario: Magic Link */}
           {tab === "magic" && (
-            <form onSubmit={handleMagicLink} className="space-y-3">
+            <form onSubmit={handleMagicLink} className="space-y-3.5">
               <div>
-                <label className="text-xs text-gray-300 font-medium mb-1 block">
+                <label className="text-xs text-slate-300 font-medium mb-1.5 block">
                   Correo Electrónico (Gmail)
                 </label>
                 <div className="relative">
-                  <Mail className="w-4 h-4 text-gray-500 absolute left-3 top-2.5" />
+                  <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="tu.correo@gmail.com"
                     required
-                    className="w-full bg-[#181818] border border-[#383838] rounded-lg pl-9 pr-3 py-2 text-xs text-white outline-none focus:border-blue-500 transition"
+                    className="w-full bg-[#181a24] border border-white/[0.08] focus:border-cyan-500/60 focus:ring-1 focus:ring-cyan-500/30 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-white outline-none placeholder-slate-600 transition"
                   />
                 </div>
-                <p className="text-[11px] text-gray-500 mt-1">
+                <p className="text-[11px] text-slate-500 mt-1.5 leading-relaxed">
                   Te enviaremos un enlace de 1 clic directo a tu correo sin requerir contraseña.
                 </p>
               </div>
@@ -373,28 +375,28 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-medium text-xs py-2.5 rounded-lg transition shadow-lg shadow-purple-600/20 mt-3"
+                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 disabled:opacity-50 text-white font-medium text-xs py-3 rounded-xl transition shadow-lg shadow-indigo-950/40 mt-4"
               >
                 <span>{isLoading ? "Enviando enlace..." : "Enviar Enlace Mágico"}</span>
-                <KeyRound className="w-3.5 h-3.5" />
+                <KeyRound className="w-4 h-4" />
               </button>
             </form>
           )}
 
           {/* Mensajes de Feedback */}
           {errorMessage && (
-            <div className="flex items-start gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-[11px] text-red-300">
-              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-              <div className="flex-1">
+            <div className="flex items-start gap-2.5 p-3.5 rounded-xl bg-red-500/10 border border-red-500/20 text-[11px] text-red-300">
+              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-400" />
+              <div className="flex-1 leading-relaxed">
                 <span>{errorMessage}</span>
               </div>
             </div>
           )}
 
           {successMessage && (
-            <div className="flex items-start gap-2 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-[11px] text-emerald-300">
-              <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />
-              <div className="flex-1">
+            <div className="flex items-start gap-2.5 p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-[11px] text-emerald-300">
+              <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5 text-emerald-400" />
+              <div className="flex-1 leading-relaxed">
                 <span>{successMessage}</span>
               </div>
             </div>
@@ -404,22 +406,22 @@ export default function LoginPage() {
           <div className="pt-2 text-center">
             <button
               onClick={handleGuestLogin}
-              className="text-[11px] text-gray-400 hover:text-gray-200 transition underline underline-offset-2"
+              className="text-xs text-slate-400 hover:text-white transition underline underline-offset-4"
             >
               O continuar en modo local offline
             </button>
           </div>
 
           {/* Encryption notice */}
-          <div className="pt-3 border-t border-[#2a2a2a] flex items-center justify-center gap-1.5 text-[11px] text-gray-400">
-            <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
+          <div className="pt-3.5 border-t border-white/[0.06] flex items-center justify-center gap-2 text-[11px] text-slate-400">
+            <ShieldCheck className="w-4 h-4 text-cyan-400" />
             <span>Datos cifrados y aislados en Supabase PostgreSQL</span>
           </div>
         </div>
 
         {/* Back Link */}
-        <p className="text-center text-xs text-gray-500 mt-4">
-          <Link href="/" className="hover:text-blue-400 transition">
+        <p className="text-center text-xs text-slate-500 mt-5">
+          <Link href="/" className="hover:text-cyan-400 transition font-medium">
             ← Volver al espacio de trabajo
           </Link>
         </p>

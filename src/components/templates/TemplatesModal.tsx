@@ -27,38 +27,38 @@ export const TemplatesModal: React.FC<TemplatesModalProps> = ({
       : TEMPLATE_LIBRARY.filter((t) => t.category === selectedCategory);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-      <div className="w-full max-w-3xl rounded-2xl bg-[#202020] border border-[#2f2f2f] text-[#e3e2e0] p-6 shadow-2xl relative max-h-[85vh] flex flex-col animate-in fade-in zoom-in-95 duration-150">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md p-4">
+      <div className="w-full max-w-3xl rounded-3xl bg-[#13141d]/95 border border-white/[0.1] text-[#f0f2f7] p-6 md:p-8 shadow-2xl relative max-h-[85vh] flex flex-col backdrop-blur-2xl animate-in fade-in zoom-in-95 duration-150">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white p-1 rounded-lg hover:bg-[#2c2c2c] transition"
+          className="absolute top-5 right-5 text-slate-400 hover:text-white p-1.5 rounded-xl hover:bg-white/[0.08] transition"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Header */}
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center border border-blue-500/20">
+        <div className="flex items-center gap-3.5 mb-5">
+          <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-blue-500/20 via-indigo-500/20 to-cyan-500/20 text-cyan-300 flex items-center justify-center border border-cyan-500/30 shadow-lg shadow-cyan-500/10">
             <Layers className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-white">Galería de Plantillas de AgendAR</h3>
-            <p className="text-xs text-gray-400">
+            <h3 className="text-xl font-bold text-white tracking-tight">Galería de Plantillas de AgendAR</h3>
+            <p className="text-xs text-slate-400 mt-0.5">
               Inicia tus proyectos al instante con flujos de trabajo probados y estructurados
             </p>
           </div>
         </div>
 
         {/* Category Pills */}
-        <div className="flex items-center gap-2 pb-3 border-b border-[#2c2c2c] overflow-x-auto">
+        <div className="flex items-center gap-2 pb-3.5 border-b border-white/[0.06] overflow-x-auto">
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1 rounded-full text-xs font-medium transition ${
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
                 selectedCategory === cat
-                  ? "bg-blue-600 text-white shadow-sm"
-                  : "bg-[#282828] text-gray-400 hover:text-white hover:bg-[#333333]"
+                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-600/25 font-semibold"
+                  : "bg-white/[0.05] text-slate-400 hover:text-white hover:bg-white/[0.08]"
               }`}
             >
               {cat}
@@ -71,32 +71,39 @@ export const TemplatesModal: React.FC<TemplatesModalProps> = ({
           {filtered.map((tpl) => (
             <div
               key={tpl.id}
-              className="bg-[#262626] hover:bg-[#2b2b2b] border border-[#333333] hover:border-blue-500/40 rounded-xl p-4 transition group flex flex-col justify-between"
+              className="bg-[#161822]/90 hover:bg-[#1c1e2b] border border-white/[0.07] hover:border-cyan-500/50 rounded-2xl p-4 transition-all group flex flex-col justify-between shadow-sm"
             >
               <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-2xl">{tpl.icon}</span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#1e1e1e] border border-[#383838] text-gray-400">
-                    {tpl.category}
-                  </span>
+                <div className="flex items-center justify-between mb-2.5">
+                  <span className="text-2xl group-hover:scale-110 transition-transform">{tpl.icon}</span>
+                  <div className="flex items-center gap-1.5">
+                    {tpl.isEncrypted && (
+                      <span className="text-[9px] px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-300 border border-purple-500/30 font-semibold">
+                        E2EE
+                      </span>
+                    )}
+                    <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-white/[0.05] border border-white/[0.08] text-slate-400 font-medium">
+                      {tpl.category}
+                    </span>
+                  </div>
                 </div>
-                <h4 className="text-sm font-semibold text-white group-hover:text-blue-400 transition mb-1">
+                <h4 className="text-sm font-bold text-white group-hover:text-cyan-400 transition mb-1">
                   {tpl.name}
                 </h4>
-                <p className="text-xs text-gray-400 leading-relaxed">{tpl.description}</p>
+                <p className="text-xs text-slate-400 leading-relaxed">{tpl.description}</p>
               </div>
 
-              <div className="pt-3 mt-3 border-t border-[#333333] flex items-center justify-between">
-                <span className="text-[11px] text-gray-500">{tpl.blocks.length} bloques</span>
+              <div className="pt-3 mt-3 border-t border-white/[0.06] flex items-center justify-between">
+                <span className="text-[11px] text-slate-500 font-mono">{tpl.blocks.length} bloques</span>
                 <button
                   onClick={() => {
                     onSelectTemplate(tpl);
                     onClose();
                   }}
-                  className="flex items-center gap-1.5 bg-blue-600/20 hover:bg-blue-600 text-blue-300 hover:text-white text-xs px-3 py-1.5 rounded-lg font-medium transition"
+                  className="flex items-center gap-1.5 bg-cyan-500/15 hover:bg-gradient-to-r hover:from-blue-600 hover:to-indigo-600 text-cyan-300 hover:text-white text-xs px-3.5 py-1.5 rounded-xl font-semibold transition-all shadow-sm active:scale-95"
                 >
                   <span>Usar Plantilla</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                 </button>
               </div>
             </div>

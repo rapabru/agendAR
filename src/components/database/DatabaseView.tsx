@@ -82,56 +82,62 @@ export const DatabaseViewComponent: React.FC<DatabaseViewProps> = ({
   );
 
   return (
-    <div className="rounded-xl border border-[#2f2f2f] bg-[#1e1e1e] p-4 text-[#e3e2e0] shadow-xl">
+    <div className="rounded-2xl border border-white/[0.08] bg-[#12131b]/90 backdrop-blur-xl p-5 text-[#f0f2f7] shadow-2xl">
       {/* View Switcher Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#2c2c2c] pb-3 mb-4">
-        <div className="flex items-center gap-1 bg-[#252525] p-1 rounded-lg border border-[#333333]">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.06] pb-4 mb-5">
+        <div className="flex items-center gap-1.5 bg-[#181a24] p-1.5 rounded-xl border border-white/[0.06]">
           <button
             onClick={() => setActiveView("board")}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition ${
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition ${
               activeView === "board"
-                ? "bg-[#333333] text-white shadow-sm"
-                : "text-gray-400 hover:text-white"
+                ? "bg-white/[0.1] text-white shadow-sm ring-1 ring-white/10"
+                : "text-slate-400 hover:text-white hover:bg-white/[0.04]"
             }`}
           >
-            <Kanban className="w-3.5 h-3.5 text-blue-400" />
+            <div className="w-5 h-5 rounded-md bg-blue-500/15 border border-blue-500/25 flex items-center justify-center">
+              <Kanban className="w-3 h-3 text-cyan-400" />
+            </div>
             <span>Tablero Kanban</span>
           </button>
           <button
             onClick={() => setActiveView("table")}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition ${
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition ${
               activeView === "table"
-                ? "bg-[#333333] text-white shadow-sm"
-                : "text-gray-400 hover:text-white"
+                ? "bg-white/[0.1] text-white shadow-sm ring-1 ring-white/10"
+                : "text-slate-400 hover:text-white hover:bg-white/[0.04]"
             }`}
           >
-            <TableIcon className="w-3.5 h-3.5 text-emerald-400" />
+            <div className="w-5 h-5 rounded-md bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center">
+              <TableIcon className="w-3 h-3 text-emerald-400" />
+            </div>
             <span>Tabla</span>
           </button>
           <button
             onClick={() => setActiveView("calendar")}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition ${
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition ${
               activeView === "calendar"
-                ? "bg-[#333333] text-white shadow-sm"
-                : "text-gray-400 hover:text-white"
+                ? "bg-white/[0.1] text-white shadow-sm ring-1 ring-white/10"
+                : "text-slate-400 hover:text-white hover:bg-white/[0.04]"
             }`}
           >
-            <Calendar className="w-3.5 h-3.5 text-purple-400" />
+            <div className="w-5 h-5 rounded-md bg-purple-500/15 border border-purple-500/25 flex items-center justify-center">
+              <Calendar className="w-3 h-3 text-purple-400" />
+            </div>
             <span>Calendario</span>
           </button>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <input
             type="text"
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
             placeholder="Filtrar tareas..."
-            className="bg-[#262626] border border-[#383838] px-2.5 py-1 rounded-md text-xs text-[#e3e2e0] outline-none placeholder-gray-500 w-40"
+            className="bg-[#181a24] border border-white/[0.08] px-3.5 py-1.5 rounded-xl text-xs text-white outline-none placeholder-slate-500 focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/30 w-48 transition"
           />
           <button
             onClick={handleAddRow}
-            className="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2.5 py-1 rounded-md font-medium transition"
+            className="flex items-center gap-1.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white text-xs px-3.5 py-1.5 rounded-xl font-medium transition shadow-md shadow-cyan-950/40"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Nueva Tarea</span>
@@ -177,56 +183,56 @@ const KanbanBoard: React.FC<{
         const colRows = rows.filter((r) => (r.properties["prop-status"] || "Por Hacer") === col);
 
         return (
-          <div key={col} className="bg-[#242424] rounded-lg p-3 border border-[#2f2f2f] flex flex-col">
+          <div key={col} className="bg-[#161822]/90 rounded-2xl p-4 border border-white/[0.06] flex flex-col">
             <div className="flex items-center justify-between mb-3 px-1">
-              <span className="text-xs font-semibold text-gray-300 uppercase tracking-wider flex items-center gap-2">
+              <span className="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-2">
                 <span
                   className={`w-2 h-2 rounded-full ${
                     col === "Completado"
-                      ? "bg-emerald-500"
+                      ? "bg-emerald-400 shadow-sm shadow-emerald-400/50"
                       : col === "En Progreso"
-                      ? "bg-blue-500"
-                      : "bg-gray-400"
+                      ? "bg-cyan-400 shadow-sm shadow-cyan-400/50"
+                      : "bg-slate-500"
                   }`}
                 />
                 {col}
               </span>
-              <span className="text-[11px] text-gray-400 bg-[#1c1c1c] px-1.5 py-0.5 rounded-full font-mono">
+              <span className="text-[11px] text-slate-400 bg-white/[0.05] border border-white/[0.06] px-2 py-0.5 rounded-full font-mono">
                 {colRows.length}
               </span>
             </div>
 
-            <div className="space-y-2 flex-1">
+            <div className="space-y-2.5 flex-1">
               {colRows.map((row) => (
                 <div
                   key={row.id}
-                  className="bg-[#2a2a2a] hover:bg-[#303030] p-3 rounded-lg border border-[#383838] transition shadow-sm group"
+                  className="bg-[#1c1e2b] hover:bg-[#212433] p-3.5 rounded-xl border border-white/[0.07] hover:border-cyan-500/30 transition shadow-sm group"
                 >
-                  <div className="flex items-start gap-2 mb-2">
+                  <div className="flex items-start gap-2.5 mb-2.5">
                     <button
                       onClick={() => onToggleDone(row.id)}
-                      className="mt-0.5 text-gray-400 hover:text-emerald-400 transition"
+                      className="mt-0.5 text-slate-400 hover:text-emerald-400 transition"
                     >
                       {row.properties["prop-done"] ? (
-                        <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                       ) : (
                         <Circle className="w-4 h-4" />
                       )}
                     </button>
                     <span
                       className={`text-xs font-medium leading-snug flex-1 ${
-                        row.properties["prop-done"] ? "line-through text-gray-500" : "text-[#e3e2e0]"
+                        row.properties["prop-done"] ? "line-through text-slate-500" : "text-[#f0f2f7]"
                       }`}
                     >
                       {row.properties["prop-title"]}
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between text-[10px] text-gray-400 pt-1 border-t border-[#333333]">
-                    <span className="px-1.5 py-0.5 rounded bg-[#1f1f1f] border border-[#383838]">
+                  <div className="flex items-center justify-between text-[10px] text-slate-400 pt-2 border-t border-white/[0.05]">
+                    <span className="px-2 py-0.5 rounded-lg bg-white/[0.04] border border-white/[0.08] text-slate-300">
                       {row.properties["prop-priority"]}
                     </span>
-                    <span className="font-mono text-gray-400">{row.properties["prop-date"]}</span>
+                    <span className="font-mono text-slate-400">{row.properties["prop-date"]}</span>
                   </div>
                 </div>
               ))}
@@ -247,43 +253,43 @@ const TableView: React.FC<{
   onUpdateStatus: (id: string, status: string) => void;
 }> = ({ rows, onToggleDone }) => {
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto rounded-xl border border-white/[0.06]">
       <table className="w-full text-left text-xs border-collapse">
-        <thead>
-          <tr className="border-b border-[#2f2f2f] text-gray-400 uppercase tracking-wider text-[10px]">
-            <th className="py-2 px-3 w-8">Listo</th>
-            <th className="py-2 px-3">Tarea</th>
-            <th className="py-2 px-3">Estado</th>
-            <th className="py-2 px-3">Prioridad</th>
-            <th className="py-2 px-3">Fecha</th>
+        <thead className="bg-white/[0.02]">
+          <tr className="border-b border-white/[0.08] text-slate-400 uppercase tracking-wider text-[10px]">
+            <th className="py-2.5 px-3.5 w-8">Listo</th>
+            <th className="py-2.5 px-3.5">Tarea</th>
+            <th className="py-2.5 px-3.5">Estado</th>
+            <th className="py-2.5 px-3.5">Prioridad</th>
+            <th className="py-2.5 px-3.5">Fecha</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-[#2a2a2a]">
+        <tbody className="divide-y divide-white/[0.04]">
           {rows.map((row) => (
-            <tr key={row.id} className="hover:bg-[#252525] transition">
-              <td className="py-2 px-3">
+            <tr key={row.id} className="hover:bg-white/[0.03] transition">
+              <td className="py-2.5 px-3.5">
                 <button onClick={() => onToggleDone(row.id)}>
                   {row.properties["prop-done"] ? (
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                   ) : (
-                    <Circle className="w-4 h-4 text-gray-400" />
+                    <Circle className="w-4 h-4 text-slate-500 hover:text-slate-300" />
                   )}
                 </button>
               </td>
-              <td className={`py-2 px-3 font-medium ${row.properties["prop-done"] ? "line-through text-gray-500" : ""}`}>
+              <td className={`py-2.5 px-3.5 font-medium ${row.properties["prop-done"] ? "line-through text-slate-500" : "text-[#f0f2f7]"}`}>
                 {row.properties["prop-title"]}
               </td>
-              <td className="py-2 px-3">
-                <span className="px-2 py-0.5 rounded text-[11px] bg-blue-500/10 text-blue-300 border border-blue-500/20">
+              <td className="py-2.5 px-3.5">
+                <span className="px-2.5 py-0.5 rounded-lg text-[11px] font-medium bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
                   {row.properties["prop-status"]}
                 </span>
               </td>
-              <td className="py-2 px-3">
-                <span className="px-2 py-0.5 rounded text-[11px] bg-purple-500/10 text-purple-300 border border-purple-500/20">
+              <td className="py-2.5 px-3.5">
+                <span className="px-2.5 py-0.5 rounded-lg text-[11px] font-medium bg-purple-500/10 text-purple-300 border border-purple-500/20">
                   {row.properties["prop-priority"]}
                 </span>
               </td>
-              <td className="py-2 px-3 font-mono text-gray-400">{row.properties["prop-date"]}</td>
+              <td className="py-2.5 px-3.5 font-mono text-slate-400">{row.properties["prop-date"]}</td>
             </tr>
           ))}
         </tbody>
@@ -297,14 +303,14 @@ const TableView: React.FC<{
  */
 const CalendarGridView: React.FC<{ rows: DatabaseRow[] }> = ({ rows }) => {
   return (
-    <div className="p-4 bg-[#232323] rounded-lg border border-[#2f2f2f] text-center">
-      <h4 className="text-sm font-semibold mb-2 flex items-center justify-center gap-2 text-emerald-400">
+    <div className="p-5 bg-[#161822]/80 rounded-2xl border border-white/[0.06] text-center">
+      <h4 className="text-sm font-semibold mb-3 flex items-center justify-center gap-2 text-emerald-400">
         <Calendar className="w-4 h-4" />
         Vista de Proyección de Tareas en Calendario
       </h4>
-      <div className="grid grid-cols-7 gap-2 mt-4 text-xs">
+      <div className="grid grid-cols-7 gap-2.5 mt-4 text-xs">
         {["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"].map((d) => (
-          <div key={d} className="font-semibold text-gray-400 py-1 border-b border-[#333333]">
+          <div key={d} className="font-semibold text-slate-400 py-1.5 border-b border-white/[0.06]">
             {d}
           </div>
         ))}
@@ -316,14 +322,14 @@ const CalendarGridView: React.FC<{ rows: DatabaseRow[] }> = ({ rows }) => {
           return (
             <div
               key={i}
-              className="h-20 bg-[#1c1c1c] border border-[#2d2d2d] rounded p-1 text-left flex flex-col justify-between"
+              className="h-20 bg-[#12131b] border border-white/[0.06] rounded-xl p-2 text-left flex flex-col justify-between hover:border-cyan-500/30 transition shadow-inner"
             >
-              <span className="text-[10px] text-gray-400">{dayNum} Oct</span>
+              <span className="text-[10px] text-slate-400 font-mono">{dayNum} Oct</span>
               <div className="space-y-1">
                 {matchingRows.map((r) => (
                   <div
                     key={r.id}
-                    className="text-[9px] bg-blue-600/30 text-blue-300 p-0.5 rounded truncate border border-blue-500/20"
+                    className="text-[9px] bg-cyan-600/20 text-cyan-300 p-1 rounded-md truncate border border-cyan-500/20 font-medium"
                     title={r.properties["prop-title"]}
                   >
                     {r.properties["prop-title"]}

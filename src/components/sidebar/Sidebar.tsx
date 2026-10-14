@@ -70,25 +70,25 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside
-      className={`h-screen bg-[#202020] text-[#9b9a97] flex flex-col border-r border-[#2f2f2f] select-none transition-all duration-200 ${
+      className={`h-screen bg-[#0f1016] text-slate-400 flex flex-col border-r border-white/[0.06] select-none transition-all duration-200 ${
         collapsed ? "w-16" : "w-64"
       }`}
     >
       {/* Workspace Header */}
-      <div className="p-3 border-b border-[#2f2f2f] flex items-center justify-between">
-        <div className="flex items-center gap-2 overflow-hidden">
-          <div className="w-7 h-7 rounded-md bg-blue-600/20 text-blue-400 flex items-center justify-center font-bold text-sm shrink-0 border border-blue-500/30">
+      <div className="p-3 border-b border-white/[0.06] flex items-center justify-between">
+        <div className="flex items-center gap-2.5 overflow-hidden">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 via-indigo-600 to-cyan-400 text-white flex items-center justify-center font-black text-sm shrink-0 shadow-lg shadow-blue-500/20 ring-1 ring-white/20">
             A
           </div>
           {!collapsed && (
             <div className="flex flex-col truncate">
-              <span className="text-sm font-semibold text-[#e3e2e0] truncate flex items-center gap-1.5">
+              <span className="text-sm font-bold text-white tracking-tight flex items-center gap-1.5">
                 AgendAR
-                <span className="text-[10px] px-1 py-0.2 bg-blue-500/20 text-blue-400 rounded border border-blue-500/30">
+                <span className="text-[10px] px-1.5 py-0.2 bg-cyan-500/15 text-cyan-300 rounded-full border border-cyan-500/30 font-medium">
                   PRO
                 </span>
               </span>
-              <span className="text-[11px] text-gray-500 truncate">{userEmail}</span>
+              <span className="text-[11px] text-slate-500 truncate font-mono">{userEmail}</span>
             </div>
           )}
         </div>
@@ -98,13 +98,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div className="p-2 space-y-1">
         <button
           onClick={onOpenAIModal}
-          className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs hover:bg-[#2c2c2c] hover:text-[#e3e2e0] transition text-left group"
+          className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl text-xs hover:bg-white/[0.05] hover:text-white transition-all text-left group"
         >
-          <Sparkles className="w-4 h-4 text-purple-400" />
+          <div className="w-6 h-6 rounded-lg bg-purple-500/15 text-purple-400 border border-purple-500/25 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+            <Sparkles className="w-3.5 h-3.5" />
+          </div>
           {!collapsed && (
             <div className="flex-1 flex items-center justify-between">
-              <span>Asistente IA</span>
-              <span className="text-[9px] px-1.5 py-0.2 bg-purple-500/20 text-purple-300 rounded border border-purple-500/30">
+              <span className="font-medium">Asistente IA</span>
+              <span className="text-[9px] px-1.5 py-0.2 bg-purple-500/20 text-purple-300 rounded-full border border-purple-500/30">
                 BYOK
               </span>
             </div>
@@ -113,24 +115,28 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         <button
           onClick={onOpenTemplates}
-          className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs hover:bg-[#2c2c2c] hover:text-[#e3e2e0] transition text-left"
+          className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl text-xs hover:bg-white/[0.05] hover:text-white transition-all text-left group"
         >
-          <Layers className="w-4 h-4 text-blue-400" />
-          {!collapsed && <span>Galería de Plantillas</span>}
+          <div className="w-6 h-6 rounded-lg bg-cyan-500/15 text-cyan-400 border border-cyan-500/25 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+            <Layers className="w-3.5 h-3.5" />
+          </div>
+          {!collapsed && <span className="font-medium">Galería de Plantillas</span>}
         </button>
 
         <button
           onClick={onOpenCalendarModal}
-          className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs hover:bg-[#2c2c2c] hover:text-[#e3e2e0] transition text-left group"
+          className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl text-xs hover:bg-white/[0.05] hover:text-white transition-all text-left group"
         >
-          <Calendar className="w-4 h-4 text-emerald-400" />
+          <div className="w-6 h-6 rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/25 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+            <Calendar className="w-3.5 h-3.5" />
+          </div>
           {!collapsed && (
             <div className="flex-1 flex items-center justify-between">
-              <span>Google Calendar</span>
+              <span className="font-medium">Google Calendar</span>
               {googleCalendarLinked ? (
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" title="Sincronizado" />
+                <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400/50 animate-pulse" title="Sincronizado" />
               ) : (
-                <span className="text-[10px] text-amber-400/80 bg-amber-500/10 px-1 rounded">Conectar</span>
+                <span className="text-[10px] text-amber-400 bg-amber-500/10 px-1.5 py-0.2 rounded-full border border-amber-500/20">Conectar</span>
               )}
             </div>
           )}
@@ -138,10 +144,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         <button
           onClick={() => onCreatePage(true)}
-          className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-md text-xs hover:bg-[#2c2c2c] hover:text-[#e3e2e0] transition text-left"
+          className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-xl text-xs hover:bg-white/[0.05] hover:text-white transition-all text-left group"
         >
-          <Lock className="w-4 h-4 text-purple-400" />
-          {!collapsed && <span>Nueva Bóveda (E2EE)</span>}
+          <div className="w-6 h-6 rounded-lg bg-amber-500/15 text-amber-400 border border-amber-500/25 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+            <Lock className="w-3.5 h-3.5" />
+          </div>
+          {!collapsed && <span className="font-medium">Nueva Bóveda (E2EE)</span>}
         </button>
       </div>
 
@@ -219,14 +227,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Security & Sync Status Bar */}
-      <div className="p-3 border-t border-[#2f2f2f] text-xs space-y-2">
-        <div className="flex items-center justify-between text-gray-400">
+      <div className="p-3 border-t border-white/[0.06] bg-[#0c0d12]/40 text-xs space-y-2">
+        <div className="flex items-center justify-between text-slate-400">
           <div className="flex items-center gap-1.5 text-[11px]">
-            <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
-            {!collapsed && <span>Cifrado Activo</span>}
+            <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
+            {!collapsed && <span className="font-medium text-slate-300">Cifrado Activo</span>}
           </div>
           {!collapsed && googleCalendarLinked && (
-            <span className="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+            <span className="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/25 font-medium">
               G-Calendar OK
             </span>
           )}
@@ -234,22 +242,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* User Account Controls */}
         {!collapsed && (
-          <div className="pt-2 border-t border-[#2a2a2a] flex items-center justify-between">
+          <div className="pt-2 border-t border-white/[0.06] flex items-center justify-between">
             {isLoggedIn ? (
               <div className="flex items-center justify-between w-full">
                 <div className="flex items-center gap-2 truncate">
-                  <div className="w-6 h-6 rounded-full bg-blue-600/30 text-blue-300 border border-blue-500/40 flex items-center justify-center text-[10px] font-bold">
-                    {userName ? userName[0].toUpperCase() : "G"}
+                  <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white border border-white/20 flex items-center justify-center text-xs font-bold shadow-sm shadow-blue-500/25">
+                    {userName ? userName[0].toUpperCase() : "U"}
                   </div>
                   <div className="flex flex-col truncate">
-                    <span className="text-[11px] font-medium text-gray-200 truncate">{userName || "Usuario"}</span>
-                    <span className="text-[9px] text-emerald-400">Guardado en tu cuenta</span>
+                    <span className="text-xs font-semibold text-slate-200 truncate">{userName || "Usuario"}</span>
+                    <span className="text-[10px] text-emerald-400 flex items-center gap-1 font-medium">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Sincronizado
+                    </span>
                   </div>
                 </div>
                 <button
                   onClick={onLogout}
                   title="Cerrar sesión"
-                  className="p-1 hover:text-red-400 hover:bg-[#2c2c2c] rounded text-gray-400 transition"
+                  className="p-1.5 hover:text-rose-400 hover:bg-white/[0.06] rounded-lg text-slate-400 transition"
                 >
                   <LogOut className="w-3.5 h-3.5" />
                 </button>
@@ -257,7 +267,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             ) : (
               <button
                 onClick={onLogin}
-                className="w-full flex items-center justify-center gap-1.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-xs font-medium transition shadow-sm"
+                className="w-full flex items-center justify-center gap-2 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-xl text-xs font-semibold transition shadow-md shadow-blue-600/20 active:scale-[0.98]"
               >
                 <LogIn className="w-3.5 h-3.5" />
                 <span>Iniciar con Gmail</span>
@@ -281,10 +291,10 @@ const PageNavItem: React.FC<PageNavItemProps> = ({ page, isActive, onSelect, onD
   return (
     <div
       onClick={onSelect}
-      className={`group flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs cursor-pointer transition ${
+      className={`group relative flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs cursor-pointer transition-all duration-150 ${
         isActive
-          ? "bg-[#2c2c2c] text-[#e3e2e0] font-medium"
-          : "hover:bg-[#262626] hover:text-[#e3e2e0] text-[#9b9a97]"
+          ? "bg-white/[0.08] text-white font-medium shadow-sm border-l-2 border-cyan-400 pl-2"
+          : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]"
       }`}
     >
       <div className="flex items-center gap-2 truncate">
@@ -292,14 +302,14 @@ const PageNavItem: React.FC<PageNavItemProps> = ({ page, isActive, onSelect, onD
         <span className="truncate">{page.title || "Sin título"}</span>
       </div>
 
-      <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1 transition">
+      <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1 transition-opacity">
         {page.isPrivate && (
-          <span title="Proyecto Privado" className="text-blue-400 text-[10px]">
+          <span title="Proyecto Privado" className="text-cyan-400 text-[10px] px-1.5 py-0.2 bg-cyan-500/10 rounded border border-cyan-500/20">
             Privado
           </span>
         )}
         {page.isEncrypted && (
-          <span title="Bóveda Cifrada" className="text-purple-400 text-[10px]">
+          <span title="Bóveda Cifrada" className="text-purple-400 text-[10px] px-1.5 py-0.2 bg-purple-500/10 rounded border border-purple-500/20">
             E2EE
           </span>
         )}
@@ -308,7 +318,7 @@ const PageNavItem: React.FC<PageNavItemProps> = ({ page, isActive, onSelect, onD
             e.stopPropagation();
             onDelete();
           }}
-          className="p-1 hover:text-red-400 hover:bg-[#333333] rounded"
+          className="p-1 hover:text-rose-400 hover:bg-white/[0.08] rounded transition"
           title="Eliminar página"
         >
           <Trash2 className="w-3 h-3" />

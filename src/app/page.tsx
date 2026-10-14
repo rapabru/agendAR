@@ -527,19 +527,19 @@ export default function AgendARApp() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col h-full overflow-hidden">
+      <main className="flex-1 flex flex-col h-full overflow-hidden bg-[#0c0d12]">
         {/* Top Navbar */}
-        <header className="h-12 border-b border-[#2f2f2f] px-6 flex items-center justify-between text-xs text-[#9b9a97] bg-[#191919]/80 backdrop-blur-md">
-          <div className="flex items-center gap-2">
-            <span>{activePage?.icon || "📄"}</span>
-            <span className="font-medium text-[#e3e2e0] truncate max-w-xs">
+        <header className="h-14 border-b border-white/[0.06] px-6 flex items-center justify-between text-xs text-slate-400 bg-[#0c0d12]/75 backdrop-blur-xl sticky top-0 z-20">
+          <div className="flex items-center gap-2.5">
+            <span className="text-lg">{activePage?.icon || "📄"}</span>
+            <span className="font-semibold text-white tracking-tight truncate max-w-xs text-sm">
               {activePage?.title || "Sin título"}
             </span>
 
             <button
               onClick={handleToggleFavorite}
-              className={`p-1 rounded hover:bg-[#2c2c2c] transition ${
-                activePage?.isFavorite ? "text-amber-400" : "text-gray-500 hover:text-gray-300"
+              className={`p-1.5 rounded-lg hover:bg-white/[0.06] transition-colors ${
+                activePage?.isFavorite ? "text-amber-400" : "text-slate-500 hover:text-slate-300"
               }`}
               title={activePage?.isFavorite ? "Quitar de favoritos" : "Añadir a favoritos"}
             >
@@ -547,59 +547,59 @@ export default function AgendARApp() {
             </button>
 
             {activePage?.isPrivate && (
-              <span className="flex items-center gap-1 text-[10px] text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded border border-blue-500/20">
+              <span className="flex items-center gap-1 text-[10px] text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/25 font-medium">
                 <Shield className="w-3 h-3" /> Privado
               </span>
             )}
 
             {activePage?.isEncrypted && (
-              <span className="flex items-center gap-1 text-[10px] text-purple-400 bg-purple-500/10 px-1.5 py-0.5 rounded border border-purple-500/20">
+              <span className="flex items-center gap-1 text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-full border border-purple-500/25 font-medium">
                 <Lock className="w-3 h-3" /> E2EE
               </span>
             )}
           </div>
 
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
             {/* Sync Cloud Indicator Badge */}
             {syncState.status === "synced" && (
               <span
-                className="hidden md:flex items-center gap-1.5 text-[11px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 shadow-sm"
+                className="hidden md:flex items-center gap-1.5 text-[11px] text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/25 font-medium shadow-sm"
                 title="Sincronizado y respaldado en Supabase Cloud"
               >
-                <Cloud className="w-3 h-3 text-emerald-400" />
+                <Cloud className="w-3.5 h-3.5 text-emerald-400" />
                 <span>Nube Supabase OK</span>
               </span>
             )}
             {syncState.status === "syncing" && (
               <span
-                className="hidden md:flex items-center gap-1.5 text-[11px] text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20 animate-pulse"
+                className="hidden md:flex items-center gap-1.5 text-[11px] text-cyan-400 bg-cyan-500/10 px-2.5 py-1 rounded-full border border-cyan-500/25 animate-pulse font-medium"
                 title="Guardando cambios en Supabase..."
               >
-                <RefreshCw className="w-3 h-3 animate-spin text-blue-400" />
+                <RefreshCw className="w-3.5 h-3.5 animate-spin text-cyan-400" />
                 <span>Guardando...</span>
               </span>
             )}
             {syncState.status === "error" && (
               <span
-                className="hidden md:flex items-center gap-1.5 text-[11px] text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20"
+                className="hidden md:flex items-center gap-1.5 text-[11px] text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/25 font-medium"
                 title={syncState.errorMessage || "Copia local preservada"}
               >
-                <HardDrive className="w-3 h-3 text-amber-400" />
+                <HardDrive className="w-3.5 h-3.5 text-amber-400" />
                 <span>Caché Local</span>
               </span>
             )}
 
             <button
               onClick={() => setIsAIModalOpen(true)}
-              className="flex items-center gap-1 px-2.5 py-1 rounded bg-purple-600/15 hover:bg-purple-600/25 text-purple-300 border border-purple-500/30 transition font-medium"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-600/20 via-indigo-600/20 to-purple-600/20 hover:from-purple-600/30 hover:to-indigo-600/30 text-purple-200 border border-purple-500/30 hover:border-purple-400/50 transition-all font-semibold shadow-sm text-xs"
             >
-              <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+              <Sparkles className="w-3.5 h-3.5 text-purple-300" />
               <span>Asistente IA</span>
             </button>
 
             <button
               onClick={() => setIsTemplatesModalOpen(true)}
-              className="flex items-center gap-1 px-2.5 py-1 rounded bg-[#252525] hover:bg-[#2c2c2c] text-blue-400 border border-[#333333] transition"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-cyan-400 border border-white/[0.08] hover:border-cyan-500/30 transition-all font-medium text-xs"
             >
               <Layers className="w-3.5 h-3.5" />
               <span>Plantillas</span>
@@ -607,7 +607,7 @@ export default function AgendARApp() {
 
             <button
               onClick={() => setIsCalendarModalOpen(true)}
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#252525] hover:bg-[#2c2c2c] text-emerald-400 border border-[#333333] transition"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-emerald-400 border border-white/[0.08] hover:border-emerald-500/30 transition-all font-medium text-xs"
             >
               <Calendar className="w-3.5 h-3.5" />
               <span>{isGoogleLinked ? "Google Calendar" : "Conectar Calendar"}</span>
@@ -615,7 +615,7 @@ export default function AgendARApp() {
 
             <button
               onClick={() => setIsShareModalOpen(true)}
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#252525] hover:bg-[#2c2c2c] text-[#e3e2e0] border border-[#333333] transition"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-200 border border-white/[0.08] hover:border-white/20 transition-all font-medium text-xs"
             >
               <Users className="w-3.5 h-3.5 text-blue-400" />
               <span>Compartir</span>
@@ -625,24 +625,24 @@ export default function AgendARApp() {
             {currentUser ? (
               <button
                 onClick={() => router.push("/login")}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#252525] hover:bg-[#2c2c2c] text-gray-200 border border-[#333333] transition"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-200 border border-white/[0.08] hover:border-white/20 transition-all text-xs"
                 title="Cuenta activa - Clic para cambiar"
               >
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="truncate max-w-[120px] font-mono text-[11px]">{currentUser.email}</span>
+                <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400/50" />
+                <span className="truncate max-w-[120px] font-mono text-[11px] text-slate-300">{currentUser.email}</span>
               </button>
             ) : (
               <button
                 onClick={() => router.push("/login")}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-blue-600 hover:bg-blue-700 text-white font-medium transition shadow-sm"
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold transition-all shadow-md shadow-blue-600/25 active:scale-95 text-xs"
               >
                 <LogIn className="w-3.5 h-3.5" />
                 <span>Iniciar con Gmail</span>
               </button>
             )}
 
-            <span className="text-[11px] text-gray-500 hidden lg:flex items-center gap-1">
-              <Clock className="w-3 h-3" /> Guardado
+            <span className="text-[11px] text-slate-500 hidden xl:flex items-center gap-1 font-mono">
+              <Clock className="w-3 h-3 text-slate-500" /> Guardado
             </span>
           </div>
         </header>

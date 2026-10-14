@@ -1,12 +1,12 @@
 # 🚀 AgendAR
-
-[![Release](https://img.shields.io/badge/release-v0.7.0-blue.svg)](https://github.com/rapabru/agendAR/releases)
+ 
+[![Release](https://img.shields.io/badge/release-v0.8.0-blue.svg)](https://github.com/rapabru/agendAR/releases)
 [![Security Audit](https://img.shields.io/badge/security%20audit-passed%20%2F%20hardened-brightgreen.svg)](https://github.com/rapabru/agendAR)
 [![Deploy](https://img.shields.io/badge/deployed-Vercel-black.svg)](https://agendar-one.vercel.app)
 [![Database](https://img.shields.io/badge/database-Supabase%20PostgreSQL-emerald.svg)](https://supabase.com)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-> **El espacio de trabajo colaborativo todo-en-uno que combina notas estructuradas basadas en bloques, bases de datos relacionales sin código, sincronización bidireccional con Google Calendar y Bóvedas con encriptación de grado militar (Zero-Knowledge / E2EE).**
+> **El espacio de trabajo colaborativo todo-en-uno con diseño moderno Obsidian Dark, tipografía Plus Jakarta Sans, notas estructuradas basadas en bloques, bases de datos relacionales sin código, sincronización bidireccional con Google Calendar y Bóvedas con encriptación de grado militar (Zero-Knowledge / E2EE).**
 
 ---
 
@@ -100,8 +100,9 @@ graph TD
 | :--- | :--- | :--- |
 | **Framework** | [Next.js 15 (App Router)](https://nextjs.org/) | Renderizado híbrido, API Routes y arquitectura modular |
 | **Lenguaje** | [TypeScript](https://www.typescriptlang.org/) | Tipado estricto y seguridad en tiempo de compilación |
-| **Estilos** | [Tailwind CSS](https://tailwindcss.com/) | Diseño responsivo con estética Notion Dark |
-| **Iconografía** | [Lucide React](https://lucide.dev/) | Iconos vectoriales consistentes |
+| **Estilos & UI** | [Tailwind CSS](https://tailwindcss.com/) | Sistema Obsidian Dark & Glassmorphism con halos luminosos |
+| **Tipografía** | [Plus Jakarta Sans](https://fonts.google.com/specimen/Plus+Jakarta+Sans) & [JetBrains Mono](https://www.jetbrains.com/lp/mono/) | Fuentes optimizadas sin CLS vía `next/font/google` |
+| **Iconografía** | [Lucide React](https://lucide.dev/) | Iconos vectoriales con contenedores brillantes (*icon wells*) |
 | **Criptografía** | [Web Crypto API](https://developer.mozilla.org/es/docs/Web/API/Web_Crypto_API) | Cifrado E2EE cliente sin dependencias pesadas |
 | **Integraciones** | Google Calendar API v3 | Sincronización de eventos y tareas |
 | **Despliegue** | [Vercel](https://vercel.com/) | Hosting continuo con soporte CI/CD |
