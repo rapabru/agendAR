@@ -1,6 +1,6 @@
 # 🚀 AgendAR
 
-[![Release](https://img.shields.io/badge/release-v0.3.0-blue.svg)](https://github.com/rapabru/agendAR/releases)
+[![Release](https://img.shields.io/badge/release-v0.4.0-blue.svg)](https://github.com/rapabru/agendAR/releases)
 [![Deploy](https://img.shields.io/badge/deployed-Vercel-black.svg)](https://agendar-one.vercel.app)
 [![Database](https://img.shields.io/badge/database-Supabase%20PostgreSQL-emerald.svg)](https://supabase.com)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
@@ -138,8 +138,8 @@ graph TD
 - [x] **Fase 3**: Persistencia completa y schema para PostgreSQL en Supabase + RLS para proyectos privados.
 - [x] **Fase 4**: Asistente de IA multi-proveedor con BYOK (Gemini gratis, Claude, OpenAI) para generación de notas y bloques.
 - [x] **Fase 5**: Galería de 6 plantillas profesionales integradas (Scrum, Timeblocking, Hábitos, Minutas, Bóvedas, CRM).
-- [ ] **Fase 6**: Colaboración multijugador en vivo con cursores compartidos (WebSockets / Supabase Realtime / CRDTs).
-- [ ] **Fase 7**: Conexión activa con cuenta Supabase en producción mediante variables de entorno en Vercel.
+- [x] **Fase 6**: Conexión activa con cuenta Supabase en producción mediante variables de entorno en Vercel.
+- [ ] **Fase 7**: Colaboración multijugador en vivo con cursores compartidos (WebSockets / Supabase Realtime / CRDTs).
 
 ---
 

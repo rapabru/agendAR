@@ -5,6 +5,17 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ---
 
+## [0.4.0] - 2026-10-13
+
+### 🚀 Añadido
+- **Conexión Activa en la Nube con Supabase**:
+  - Configuración completa de variables de entorno de producción en Vercel (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_APP_URL`).
+  - Creación del archivo local protegido `.env.local` con las claves reales del proyecto `muhurolxcyfgwbouruxc`.
+  - Migración y verificación de 100% de tablas relacionales (`workspaces`, `pages`, `blocks`, `database_collections`, `profiles`) y políticas de Row-Level Security en PostgreSQL activo.
+  - Sincronización en segundo plano de páginas y bloques modificados directamente con la base de datos de Supabase.
+
+---
+
 ## [0.3.0] - 2026-10-13
 
 ### 🚀 Añadido
