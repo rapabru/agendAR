@@ -5,6 +5,28 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 
 ---
 
+## [0.5.0] - 2026-10-13
+
+### 🚀 Añadido
+- **Autenticación Nativa Completa en Supabase (Sin dependencia forzada de credenciales Google Cloud)**:
+  - Registro e inicio de sesión con Correo/Gmail y Contraseña directamente contra Supabase Auth (`signInWithEmail`, `signUpWithEmail`).
+  - Soporte de Magic Link / OTP (`signInWithOtp`) para acceso directo sin contraseña vía correo electrónico.
+  - Flujo de Google OAuth mantenido y listo para cuando se configure el Client ID/Secret en Supabase Dashboard.
+  - Página `/login` y `/register` completamente conectadas a Supabase con feedback visual de errores y confirmación.
+- **Sincronización Bidireccional en Tiempo Real e Hidratación Automática**:
+  - `fetchRemoteData()`: Recupera automáticamente las páginas y bloques de la base de datos Supabase en PostgreSQL tras iniciar sesión.
+  - Sincronización transparente en segundo plano que actualiza y persiste notas y bloques en Supabase sin bloquear la interfaz.
+  - Suscripción WebSockets en tiempo real (`subscribeRealtime`) para cambios colaborativos entre dispositivos y pestañas.
+  - Eliminación sincronizada: `deletePage` y `deleteBlock` limpian tanto la caché local como los registros en la base de datos en la nube.
+- **Telemetría Visual de Sincronización en la Barra Superior**:
+  - Badge dinámico en el Navbar: `🟢 Nube Supabase OK` cuando está respaldado, `🔄 Guardando...` durante la sincronización, y `⚪ Caché Local` en modo offline.
+- **Migración SQL 002 (`002_flexible_ids_and_rls.sql`)**:
+  - Flexibilización de identificadores en `pages` y `blocks` a formato universal `TEXT`.
+  - Corrección integral de políticas RLS permitiendo CRUD completo para páginas personales y miembros de workspace.
+  - Trigger automático `handle_new_user_workspace` para auto-aprovisionar un espacio de trabajo personal por cada nuevo usuario registrado.
+
+---
+
 ## [0.4.0] - 2026-10-13
 
 ### 🚀 Añadido

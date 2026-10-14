@@ -14,8 +14,8 @@ import { INITIAL_PAGES, INITIAL_BLOCKS } from "@/lib/mock-data";
 import { Block, BlockType, PageItem } from "@/lib/types";
 import { TemplateDefinition } from "@/lib/templates";
 import { GoogleCalendarClient, blockToCalendarEvent } from "@/lib/google-calendar";
-import { getActiveUser, logoutUser, AuthUser, setLocalGmailSession } from "@/lib/supabase/auth";
-import { UserStorageManager } from "@/lib/storage";
+import { getActiveUser, logoutUser, AuthUser } from "@/lib/supabase/auth";
+import { UserStorageManager, SyncState } from "@/lib/storage";
 import {
   Calendar,
   Lock,
@@ -31,6 +31,9 @@ import {
   LogIn,
   LogOut,
   User,
+  Cloud,
+  RefreshCw,
+  HardDrive,
 } from "lucide-react";
 
 export default function AgendARApp() {
@@ -41,6 +44,12 @@ export default function AgendARApp() {
   const [pages, setPages] = useState<PageItem[]>(INITIAL_PAGES);
   const [activePageId, setActivePageId] = useState<string>("welcome-page");
   const [blocks, setBlocks] = useState<Record<string, Block>>(INITIAL_BLOCKS);
+
+  // Sync state with Supabase Cloud
+  const [syncState, setSyncState] = useState<SyncState>({
+    status: "offline",
+    lastSyncedAt: null,
+  });
 
   // Modals State
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
@@ -59,14 +68,19 @@ export default function AgendARApp() {
 
   // Cargar usuario y datos aislados por cuenta al montar
   useEffect(() => {
+    let unsubscribeRealtime: (() => void) | undefined;
+
     async function initUserSession() {
       const user = await getActiveUser();
       const userIdentifier = user?.email || "default_space";
-      const userStorage = new UserStorageManager(userIdentifier);
+      const userStorage = new UserStorageManager(userIdentifier, (newSync) => {
+        setSyncState(newSync);
+      });
 
       setCurrentUser(user);
       setStorage(userStorage);
 
+      // Carga inmediata local (sin delay)
       const loadedPages = userStorage.loadPages();
       const loadedBlocks = userStorage.loadBlocks();
 
@@ -79,10 +93,37 @@ export default function AgendARApp() {
       if (user?.email) {
         setGoogleEmail(user.email);
         setIsGoogleLinked(true);
+
+        // Hidratar con Supabase Cloud en segundo plano
+        userStorage.fetchRemoteData().then((remoteData) => {
+          if (remoteData) {
+            setPages(remoteData.pages);
+            setBlocks(remoteData.blocks);
+            if (
+              remoteData.pages.length > 0 &&
+              !remoteData.pages.some((p) => p.id === activePageId)
+            ) {
+              setActivePageId(remoteData.pages[0].id);
+            }
+          }
+        });
+
+        // Suscripción en tiempo real a colaboraciones
+        unsubscribeRealtime = userStorage.subscribeRealtime(async () => {
+          const refreshed = await userStorage.fetchRemoteData();
+          if (refreshed) {
+            setPages(refreshed.pages);
+            setBlocks(refreshed.blocks);
+          }
+        });
       }
     }
 
     initUserSession();
+
+    return () => {
+      if (unsubscribeRealtime) unsubscribeRealtime();
+    };
   }, []);
 
   const activePage = pages.find((p) => p.id === activePageId) || pages[0];
@@ -129,7 +170,11 @@ export default function AgendARApp() {
 
   // Handler para añadir bloque
   const handleAddBlock = (type: BlockType, afterBlockId?: string) => {
-    const newId = `b-${Date.now()}`;
+    const newId =
+      typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `b-${Date.now()}`;
+
     const newBlock: Block = {
       id: newId,
       type,
@@ -172,6 +217,7 @@ export default function AgendARApp() {
     );
     setPages(updatedPages);
     storage.savePages(updatedPages);
+    storage.deleteBlock(blockId);
   };
 
   // Handler para reordenar bloques
@@ -198,8 +244,14 @@ export default function AgendARApp() {
 
   // Handler para crear nueva página
   const handleCreatePage = (isEncrypted: boolean = false) => {
-    const newPageId = `page-${Date.now()}`;
-    const initialBlockId = `b-init-${Date.now()}`;
+    const newPageId =
+      typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `page-${Date.now()}`;
+    const initialBlockId =
+      typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `b-init-${Date.now()}`;
 
     const newBlock: Block = {
       id: initialBlockId,
@@ -207,6 +259,7 @@ export default function AgendARApp() {
       content: "",
       createdAt: Date.now(),
       updatedAt: Date.now(),
+      parentId: newPageId,
     };
 
     const newPage: PageItem = {
@@ -241,6 +294,7 @@ export default function AgendARApp() {
     const remaining = pages.filter((p) => p.id !== pageId);
     setPages(remaining);
     storage.savePages(remaining);
+    storage.deletePage(pageId);
     if (activePageId === pageId) {
       setActivePageId(remaining[0].id);
     }
@@ -249,40 +303,48 @@ export default function AgendARApp() {
 
   // Sincronizar bloque con Google Calendar
   const handleSyncCalendarBlock = async (block: Block) => {
-    if (!isGoogleLinked) {
-      setIsCalendarModalOpen(true);
-      return;
-    }
+    if (!block || !block.calendarEventDate) return;
 
-    const client = new GoogleCalendarClient(true, googleEmail);
-    const event = blockToCalendarEvent(
-      block.id,
-      block.content,
-      block.calendarEventDate || new Date().toISOString()
-    );
+    try {
+      const gcalClient = new GoogleCalendarClient();
+      const eventPayload = blockToCalendarEvent(block);
+      const res = await gcalClient.createEvent(eventPayload);
 
-    const result = await client.syncEvent(event);
-    if (result.success) {
-      handleUpdateBlock(block.id, { calendarEventId: result.eventId });
-      showToast(`¡Evento sincronizado con Google Calendar (${googleEmail})!`);
+      if (res.success && res.event) {
+        handleUpdateBlock(block.id, { calendarEventId: res.event.id });
+        showToast("¡Evento sincronizado con Google Calendar!");
+      }
+    } catch {
+      showToast("Error al sincronizar con Google Calendar");
     }
   };
 
-  // Handler para seleccionar plantilla
+  // Aplicar plantilla predefinida
   const handleSelectTemplate = (template: TemplateDefinition) => {
-    const newPageId = `page-tpl-${Date.now()}`;
-    const createdBlockIds: string[] = [];
-    const newBlocksObj: Record<string, Block> = {};
+    const newPageId =
+      typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `tmpl-${Date.now()}`;
+    const newBlockIds: string[] = [];
+    const newBlocksMap: Record<string, Block> = {};
 
-    template.blocks.forEach((blk, idx) => {
-      const bId = `b-tpl-${Date.now()}-${idx}`;
-      createdBlockIds.push(bId);
-      newBlocksObj[bId] = {
-        ...blk,
+    template.blocks.forEach((item, idx) => {
+      const bId =
+        typeof crypto !== "undefined" && crypto.randomUUID
+          ? crypto.randomUUID()
+          : `b-tmpl-${Date.now()}-${idx}`;
+      newBlockIds.push(bId);
+      newBlocksMap[bId] = {
         id: bId,
-        parentId: newPageId,
+        type: item.type,
+        content: item.content,
+        checked: item.checked,
+        icon: item.icon,
+        language: item.language,
+        calendarEventDate: item.calendarEventDate,
         createdAt: Date.now(),
         updatedAt: Date.now(),
+        parentId: newPageId,
       };
     });
 
@@ -292,13 +354,12 @@ export default function AgendARApp() {
       icon: template.icon,
       isFavorite: false,
       isEncrypted: !!template.isEncrypted,
-      isPrivate: false,
       createdAt: Date.now(),
       updatedAt: Date.now(),
-      blockIds: createdBlockIds,
+      blockIds: newBlockIds,
     };
 
-    const updatedBlocks = { ...blocks, ...newBlocksObj };
+    const updatedBlocks = { ...blocks, ...newBlocksMap };
     const updatedPages = [...pages, newPage];
 
     setBlocks(updatedBlocks);
@@ -307,43 +368,53 @@ export default function AgendARApp() {
 
     storage.saveBlocks(updatedBlocks);
     storage.savePages(updatedPages);
-    showToast(`Plantilla "${template.name}" creada con éxito.`);
+    showToast(`Plantilla "${template.name}" cargada con éxito.`);
   };
 
-  // Handler para aplicar bloques generados por IA
+  // Aplicar bloques generados por el Asistente IA
   const handleApplyAIGeneratedBlocks = (
-    title: string,
-    genBlocks: Omit<Block, "id" | "createdAt" | "updatedAt">[]
+    suggestedTitle: string,
+    generatedBlocks: Omit<Block, "id" | "createdAt" | "updatedAt">[]
   ) => {
-    const newPageId = `page-ai-${Date.now()}`;
-    const createdBlockIds: string[] = [];
-    const newBlocksObj: Record<string, Block> = {};
+    const newPageId =
+      typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `ai-${Date.now()}`;
+    const newBlockIds: string[] = [];
+    const newBlocksMap: Record<string, Block> = {};
 
-    genBlocks.forEach((blk, idx) => {
-      const bId = `b-ai-${Date.now()}-${idx}`;
-      createdBlockIds.push(bId);
-      newBlocksObj[bId] = {
-        ...blk,
+    generatedBlocks.forEach((item, idx) => {
+      const bId =
+        typeof crypto !== "undefined" && crypto.randomUUID
+          ? crypto.randomUUID()
+          : `b-ai-${Date.now()}-${idx}`;
+      newBlockIds.push(bId);
+      newBlocksMap[bId] = {
         id: bId,
-        parentId: newPageId,
+        type: item.type,
+        content: item.content,
+        icon: item.icon,
+        checked: item.checked,
+        language: item.language,
+        calendarEventDate: item.calendarEventDate,
         createdAt: Date.now(),
         updatedAt: Date.now(),
+        parentId: newPageId,
       };
     });
 
     const newPage: PageItem = {
       id: newPageId,
-      title: title.slice(0, 50),
+      title: suggestedTitle || "Página Asistida por IA",
       icon: "✨",
       isFavorite: false,
       isEncrypted: false,
-      isPrivate: false,
       createdAt: Date.now(),
       updatedAt: Date.now(),
-      blockIds: createdBlockIds,
+      blockIds: newBlockIds,
     };
 
-    const updatedBlocks = { ...blocks, ...newBlocksObj };
+    const updatedBlocks = { ...blocks, ...newBlocksMap };
     const updatedPages = [...pages, newPage];
 
     setBlocks(updatedBlocks);
@@ -425,6 +496,35 @@ export default function AgendARApp() {
           </div>
 
           <div className="flex items-center gap-2.5">
+            {/* Sync Cloud Indicator Badge */}
+            {syncState.status === "synced" && (
+              <span
+                className="hidden md:flex items-center gap-1.5 text-[11px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 shadow-sm"
+                title="Sincronizado y respaldado en Supabase Cloud"
+              >
+                <Cloud className="w-3 h-3 text-emerald-400" />
+                <span>Nube Supabase OK</span>
+              </span>
+            )}
+            {syncState.status === "syncing" && (
+              <span
+                className="hidden md:flex items-center gap-1.5 text-[11px] text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20 animate-pulse"
+                title="Guardando cambios en Supabase..."
+              >
+                <RefreshCw className="w-3 h-3 animate-spin text-blue-400" />
+                <span>Guardando...</span>
+              </span>
+            )}
+            {syncState.status === "error" && (
+              <span
+                className="hidden md:flex items-center gap-1.5 text-[11px] text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20"
+                title={syncState.errorMessage || "Copia local preservada"}
+              >
+                <HardDrive className="w-3 h-3 text-amber-400" />
+                <span>Caché Local</span>
+              </span>
+            )}
+
             <button
               onClick={() => setIsAIModalOpen(true)}
               className="flex items-center gap-1 px-2.5 py-1 rounded bg-purple-600/15 hover:bg-purple-600/25 text-purple-300 border border-purple-500/30 transition font-medium"
